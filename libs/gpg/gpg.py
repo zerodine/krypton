@@ -1,0 +1,2 @@
+class Gpg(object):
+    pass
