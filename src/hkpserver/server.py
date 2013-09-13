@@ -11,17 +11,20 @@ except ImportError:
 
 from controllers import *
 
-class Server(object):
-    controllers = ['Lookup']
-    routes = []
 
-    def __init__(self):
-        pass
+class Server(object):
+    controllers = ['Lookup', 'Add']
+    routes = []
+    routePrefix = None
+
+    def __init__(self, routePrefix = "/pks"):
+        self.routePrefix = routePrefix
 
     def _buildRoutes(self):
         for c in self.controllers:
-            self.routes.append((r"/%s/(.*)" % c.lower(), eval("%sController" % c)))
-            self.routes.append((r"/%s(.*)" % c.lower(), eval("%sController" % c)))
+            #self.routes.append((r"/%s/(.*)" % c.lower(), eval("%sController" % c)))
+            #self.routes.append((r"/%s(.*)" % c.lower(), eval("%sController" % c)))
+            self.routes.append(eval("%sController" % c).routes(self.routePrefix))
 
     def start(self, port = 11371, as_thread = False):
         self._buildRoutes()

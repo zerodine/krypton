@@ -1,7 +1,7 @@
 __author__ = 'thospy'
 
 import tornado.web
-import pprint
+
 
 class LookupController(tornado.web.RequestHandler):
 
@@ -13,6 +13,10 @@ class LookupController(tornado.web.RequestHandler):
 
     searchHex = False
     searchString = None
+
+    @staticmethod
+    def routes(prefix = ""):
+        return r"%s/lookup(.*)" % prefix, eval("LookupController")
 
     def get(self, *args, **kwargs):
         # Parsing Options
@@ -62,3 +66,5 @@ class LookupController(tornado.web.RequestHandler):
 
     def op_get(self):
         self.write("Get")
+        print self.searchString
+        print self.searchHex
