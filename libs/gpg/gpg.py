@@ -13,7 +13,10 @@ class Gpg(GpgAbstractInterface):
         self._gpg.import_keys(key_data=asciiarmoredkey)
 
     def getIdentities(self):  # -> list
-        return
+        x = self._gpg.list_keys()
+        self._gpg.
+        [{'dummy': u'', 'keyid': u'E273AC6458A2DF4F', 'expires': u'1505023118', 'subkeys': [[u'BF0F9E16247FA64F', u'esa']], 'length': u'4096', 'ownertrust': u'-', 'algo': u'1', 'fingerprint': u'06284050297955B8D37238B0E273AC6458A2DF4F', 'date': u'1378792718', 'trust': u'-', 'type': u'pub', 'uids': [u'Thomas Spycher 2 (This is an comment) <me@tspycher.com>']}]
+        return x[0]['uids']
 
     def getKeydetails(self):  # -> dict
         x = self._gpg.list_keys()
@@ -31,7 +34,10 @@ class Gpg(GpgAbstractInterface):
         return result
 
     def getSubkeys(self):  # -> list
-        return
+        x = self._gpg.list_keys()
+        [{'dummy': u'', 'keyid': u'E273AC6458A2DF4F', 'expires': u'1505023118', 'subkeys': [[u'BF0F9E16247FA64F', u'esa']], 'length': u'4096', 'ownertrust': u'-', 'algo': u'1', 'fingerprint': u'06284050297955B8D37238B0E273AC6458A2DF4F', 'date': u'1378792718', 'trust': u'-', 'type': u'pub', 'uids': [u'Thomas Spycher 2 (This is an comment) <me@tspycher.com>']}]
+
+        return x[0]['subkeys']
 
     def receiveKeyFromServer(self, keyid, server):
         return
