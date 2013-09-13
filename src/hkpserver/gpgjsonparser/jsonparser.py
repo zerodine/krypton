@@ -44,7 +44,7 @@ class JsonParser(object):
             "expiration_time":      packet.expiration_time,
             "pub_algorithm":        packet.pub_algorithm,
             "pub_algorithm_type":   packet.pub_algorithm_type,
-            "modulus":              packet.modulus,
+            "modulus":              "LONGINT:%s" % packet.modulus,
             "exponent":             packet.exponent,
             "prime":                packet.prime,
             "group_order":          packet.group_order,
@@ -69,7 +69,6 @@ class JsonParser(object):
                 "key_id": s.key_id,
                 "hash2": s.hash2
             }))
-            #pprint(vars(s))
         return data
 
     def parseUserIDPacket(self, packet):
@@ -111,33 +110,26 @@ class JsonParser(object):
         return data
 
     def _organizeData(self):
-        #x = {"base":None, "signatures":[]}
         x = None
 
         for packet in self._raw.packets():
             packet.parse()
 
             if isinstance(packet, pgpdump.packet.PublicSubkeyPacket):
-                #print "PublicSubkeyPacket"
                 if x is not None:
                     self._organized["packages"].append(x)
                 x = {"packet":packet, "signatures":[]}
-                #pprint(vars(packet))
 
             elif isinstance(packet, pgpdump.packet.PublicKeyPacket):
-                #print "PublicKeyPacket"
-                #x = None
                 self._organized['publickey'] = packet
 
             elif isinstance(packet, pgpdump.packet.UserIDPacket):
-                #print "UserIDPacket"
                 if x is not None:
                     self._organized["packages"].append(x)
                 x = {"packet":packet, "signatures":[]}
                 #pprint(vars(packet))
 
             elif isinstance(packet, pgpdump.packet.SignaturePacket):
-                #print "SignaturePacket"
                 if x is not None:
                     x["signatures"].append(packet)
 
@@ -147,11 +139,9 @@ class JsonParser(object):
                     #pass
 
             elif isinstance(packet, pgpdump.packet.UserAttributePacket):
-                #print "UserAttributePacket"
                 if x is not None:
                     self._organized["packages"].append(x)
                 x = {"packet":packet, "signatures":[]}
-                #pprint(vars(packet))
 
             else:
                 print "NOT KNOWN: %s" % packet

@@ -26,7 +26,6 @@ class MongoBackend(object):
     def create(self, collection, data, id = None):
         if id is not None:
             data["_id"] = id
-
         return self.db[collection].insert(data)
 
     def update(self, collection, data, id):

@@ -9,12 +9,20 @@ class GpgModel(MongoBackend):
 
     def uploadKey(self, asciiArmoredKey):
         j = JsonParser(asciiData=asciiArmoredKey)
-        keyId = j.dump(raw=True)["fingerprint"]
+        jsonAsciiArmoredKey = j.dump(raw=True)
+        keyId = jsonAsciiArmoredKey["fingerprint"]
 
         data = {
             "keytext": asciiArmoredKey
         }
 
+        # Upload the json formated Key
+        if self.exists(id=keyId, collection="%sDetails" % self.collection):
+            self.update(data=jsonAsciiArmoredKey, collection="%sDetails" % self.collection, id=keyId)
+        else:
+            self.create(data=jsonAsciiArmoredKey, collection="%sDetails" % self.collection, id=keyId)
+
+        # Upload the asciiArmored Key
         if self.exists(id=keyId, collection=self.collection):
             return self.update(data=data, collection=self.collection, id=keyId)
         return self.create(data=data, collection=self.collection, id=keyId)
