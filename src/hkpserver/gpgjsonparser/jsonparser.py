@@ -14,8 +14,7 @@ class JsonParser(object):
         self._raw = pgpdump.AsciiData(asciiData)
         self._organizeData()
 
-    def dump(self, pretty=False):
-
+    def dump(self, pretty=False, raw=False):
         data = self.parsePublicKeyPacket(self._organized['publickey'])
 
         for p in self._organized["packages"]:
@@ -30,7 +29,8 @@ class JsonParser(object):
                 data[className].append(method(p))
         if pretty:
             return json.dumps(data, indent=4, sort_keys=True)
-
+        if raw:
+            return json.loads(json.dumps(data))
         return json.dumps(data)
 
     def parsePublicKeyPacket(self, packet):

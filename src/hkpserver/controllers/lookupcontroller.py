@@ -2,6 +2,7 @@ __author__ = 'thospy'
 
 import tornado.web
 
+from src.hkpserver.gpgmongo import GpgModel
 
 class LookupController(tornado.web.RequestHandler):
 
@@ -13,6 +14,8 @@ class LookupController(tornado.web.RequestHandler):
 
     searchHex = False
     searchString = None
+
+    gpgModel = GpgModel()
 
     @staticmethod
     def routes(prefix = ""):
@@ -31,7 +34,6 @@ class LookupController(tornado.web.RequestHandler):
         # Parsing Search
         self._parseSearch(self.get_argument("search", default="", strip=False))
 
-        print self.searchString
         # Parsing Operation and run it
         op = self.get_argument("op", default="index", strip=False)
         getattr(self, "op_%s" % str(op).lower())(**kwargs)
@@ -65,6 +67,16 @@ class LookupController(tornado.web.RequestHandler):
         self.write("Verbose Index")
 
     def op_get(self):
-        self.write("Get")
-        print self.searchString
-        print self.searchHex
+        self.gpgModel.connect(db="playground")
+        if self.searchHex:
+            key = self.gpgModel.retrieveKey(keyId=self.searchString)
+
+        self.write('''<html>
+            <head>
+                <title>Public Key Server -- Get ``0x%(fingerprint)s, ''</title>
+            </head>
+            <body>
+                <h1>Public Key Server -- Get ``0x%(fingerprint)s, ''</h1>
+                <pre>%(key)s</pre>
+            </body>
+        </html>''' % {"fingerprint": self.searchString.upper(), "key":key})
