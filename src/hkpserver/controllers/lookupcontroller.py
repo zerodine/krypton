@@ -1,10 +1,8 @@
 __author__ = 'thospy'
 
-import tornado.web
+from basecontroller import BaseController
 
-from src.hkpserver.gpgmongo import GpgModel
-
-class LookupController(tornado.web.RequestHandler):
+class LookupController(BaseController):
 
     options = []
     machineReadable = False
@@ -15,11 +13,10 @@ class LookupController(tornado.web.RequestHandler):
     searchHex = False
     searchString = None
 
-    gpgModel = GpgModel()
-
     @staticmethod
-    def routes(prefix = ""):
-        return r"%s/lookup(.*)" % prefix, eval("LookupController")
+    def routes(prefix = "", config = None):
+        #return (r"%s/lookup(.*)" % prefix, "LookupController", dict(config=config))
+        return (r"%s/lookup(.*)" % prefix, LookupController, dict(config=config))
 
     def get(self, *args, **kwargs):
         # Parsing Options
@@ -67,7 +64,7 @@ class LookupController(tornado.web.RequestHandler):
         self.write("Verbose Index")
 
     def op_get(self):
-        self.gpgModel.connect(db="playground")
+        self.gpgModel.connect(db=self.config.mongoDatabase)
         if self.searchHex:
             key = self.gpgModel.retrieveKey(keyId=self.searchString)
 

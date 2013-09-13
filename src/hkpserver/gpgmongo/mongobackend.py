@@ -10,13 +10,14 @@ class MongoBackend(object):
     db = None
 
     connected = False
+    connectionUrl = ""
 
-    def __init__(self):
-        pass
+    def __init__(self, connectionUrl):
+        self.connectionUrl = connectionUrl
 
     def connect(self, db):
         if not self.connected:
-            self._c = pymongo.MongoClient("")
+            self._c = pymongo.MongoClient(self.connectionUrl)
             self.db = self._c[db]
             self.connected = True
 

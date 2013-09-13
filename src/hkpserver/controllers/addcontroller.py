@@ -1,23 +1,20 @@
 __author__ = 'thospy'
 
-import tornado.web
+from basecontroller import BaseController
 
-from src.hkpserver.gpgmongo import GpgModel
-
-
-class AddController(tornado.web.RequestHandler):
+class AddController(BaseController):
 
     _rawKey = None
 
-    gpgModel = GpgModel()
-
     @staticmethod
-    def routes(prefix = ""):
-        return r"%s/add(.*)" % prefix, eval("AddController")
+    def routes(prefix = "", config = None):
+        #return r"%s/add(.*)" % prefix, eval("AddController")
+        return (r"%s/add(.*)" % prefix, AddController, dict(config=config))
+
 
     def post(self, *args, **kwargs):
         self._rawKey = self.get_argument("keytext", default=None, strip=False)
 
-        self.gpgModel.connect(db="playground")
+        self.gpgModel.connect(db=self.config.mongoDatabase)
         self.gpgModel.uploadKey(self._rawKey)
 

@@ -16,15 +16,17 @@ class Server(object):
     controllers = ['Lookup', 'Add']
     routes = []
     routePrefix = None
+    config = None
 
-    def __init__(self, routePrefix = "/pks"):
+    def __init__(self, routePrefix = "/pks", config = None):
         self.routePrefix = routePrefix
+        self.config = config
 
     def _buildRoutes(self):
         for c in self.controllers:
             #self.routes.append((r"/%s/(.*)" % c.lower(), eval("%sController" % c)))
             #self.routes.append((r"/%s(.*)" % c.lower(), eval("%sController" % c)))
-            self.routes.append(eval("%sController" % c).routes(self.routePrefix))
+            self.routes.append(eval("%sController" % c).routes(self.routePrefix, config=self.config))
 
     def start(self, port = 11371, as_thread = False):
         self._buildRoutes()
