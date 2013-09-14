@@ -12,3 +12,4 @@ class BaseController(tornado.web.RequestHandler):
     def initialize(self, config = None):
         self.config = config
         self.gpgModel = GpgModel(connectionUrl=self.config.mongoConnectionUrl)
+        self.gpgModel.collection = self.config.mongoCollection

@@ -38,3 +38,10 @@ class GpgModel(MongoBackend):
 
     def searchKey(self, searchString):
         pass
+
+    def cleanTestCollections(self):
+        if self.collection.lower().startswith("test"):
+            self.removeCollection(self.collection)
+            self.removeCollection("%sDetails" % self.collection)
+            return True
+        return False

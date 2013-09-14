@@ -1,3 +1,4 @@
 [mongodb]
 mongoConnectionUrl = mongodb://<USERNAME>:<PASSWORD>@<SERVER>:<PORT>/<DATABASE>
 mongoDatabase = <DATABASE>
+mongoCollection = <COLLECTION>

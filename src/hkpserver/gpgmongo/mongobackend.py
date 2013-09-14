@@ -37,3 +37,6 @@ class MongoBackend(object):
 
     def delete(self, collection, id):
         pass
+
+    def removeCollection(self, collection):
+        return self.db.drop_collection(collection)

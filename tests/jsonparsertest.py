@@ -3,9 +3,10 @@ __author__ = 'thospy'
 import unittest
 import json
 
+from abstracttestcase import AbstractTestCase
 from src.hkpserver.gpgjsonparser import JsonParser
 
-class JsonParserTest(unittest.TestCase):
+class MyTestCase(AbstractTestCase):
 
 
     def setUp(self):
@@ -21,10 +22,7 @@ class JsonParserTest(unittest.TestCase):
 
         self.assertEquals(data["fingerprint"], "27C5017E0755AD31BF40832BCF96B54D3E08F9F5", "Finger print missmatch")
 
-    def _readKey(self, file):
-        with open(file, 'r') as content_file:
-            content = content_file.read()
-        return content
+
 
 if __name__ == '__main__':
     unittest.main()
