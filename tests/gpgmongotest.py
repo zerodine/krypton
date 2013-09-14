@@ -4,7 +4,7 @@ from src.hkpserver.gpgmongo import GpgModel
 from abstracttestcase import AbstractTestCase
 
 
-class MyTestCase(AbstractTestCase):
+class GpgModelTest(AbstractTestCase):
     gpgModel = None
 
     def setUp(self):
@@ -38,6 +38,11 @@ class MyTestCase(AbstractTestCase):
         keyServer = self.gpgModel.retrieveKey("27C5017E0755AD31BF40832BCF96B54D3E08F9F5")
         self.assertEqual(keyLocal, keyServer)
 
+    @staticmethod
+    def suite():
+        test_suite = unittest.TestSuite()
+        test_suite.addTest(unittest.makeSuite(GpgModelTest))
+        return test_suite
 
 if __name__ == '__main__':
     unittest.main()

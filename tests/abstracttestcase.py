@@ -21,3 +21,8 @@ class AbstractTestCase(unittest.TestCase):
         with open(file, 'r') as content_file:
             content = content_file.read()
         return content
+
+    @staticmethod
+    def suite():
+        test_suite = unittest.TestSuite()
+        return test_suite
