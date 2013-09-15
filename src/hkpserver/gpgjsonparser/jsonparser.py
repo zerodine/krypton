@@ -2,6 +2,7 @@ __author__ = 'thospy'
 
 import json
 import pgpdump
+import base64
 
 class JsonParser(object):
     _raw = None
@@ -86,7 +87,7 @@ class JsonParser(object):
         self.image_data = None
         data = {
              "image_format":        packet["packet"].image_format,
-             "image_data":          "" #packet["packet"].image_data,
+             "image_data":          packet["packet"].image_data,
         }
         return self._serialize(data)
 
@@ -103,7 +104,7 @@ class JsonParser(object):
             elif t == "int":
                 data[k] = str(v)
             elif t == "bytearray":
-                data[k] = "BYTES"
+                data[k] = base64.b64encode(v)
             elif t == "datetime":
                 data[k] = str(v)
 

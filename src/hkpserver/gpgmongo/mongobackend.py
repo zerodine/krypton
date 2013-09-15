@@ -39,7 +39,10 @@ class MongoBackend(object):
         pass
 
     def runQuery(self, collection, query):
-        return self.db[collection].find(query)
+        data = []
+        for x in self.db[collection].find(query):
+            data.append(x)
+        return data
 
     def removeCollection(self, collection):
         return self.db.drop_collection(collection)

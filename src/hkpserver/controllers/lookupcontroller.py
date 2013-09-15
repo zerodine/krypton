@@ -1,6 +1,7 @@
 __author__ = 'thospy'
 
 from basecontroller import BaseController
+from src.hkpserver.gpgjsonparser import MrParser
 
 class LookupController(BaseController):
 
@@ -58,15 +59,35 @@ class LookupController(BaseController):
             self.noModification = True
 
     def op_index(self):
+        data = self._getData()
+        if self.machineReadable:
+            self.set_header("Content-Type", "text/plain")
+            mr = MrParser(data)
+            self.write(mr.parse())
+            return
         self.write("Index")
 
     def op_vindex(self):
+        data = self._getData()
+        print data
         self.write("Verbose Index")
+
+    def _getData(self):
+        self.gpgModel.connect(db=self.config.mongoDatabase)
+
+        if self.searchHex:
+            return self.gpgModel.searchKeyId(keyId=self.searchString)
+        return self.gpgModel.searchKey(searchString=self.searchString)
 
     def op_get(self):
         self.gpgModel.connect(db=self.config.mongoDatabase)
         if self.searchHex:
             key = self.gpgModel.retrieveKey(keyId=self.searchString)
+
+        if self.machineReadable:
+            self.set_header("Content-Type", "application/pgp-keys")
+            self.write(key)
+            return
 
         self.write('''<html>
             <head>
