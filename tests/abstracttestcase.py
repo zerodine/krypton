@@ -11,7 +11,6 @@ class AbstractTestCase(unittest.TestCase):
     def setUpClass(cls):
         c = ConfigParser.RawConfigParser(allow_no_value=True)
         c.read("../server.test.conf")
-
         cls.config = Config()
         cls.config.mongoDatabase = c.get("mongodb", "mongoDatabase")
         cls.config.mongoConnectionUrl = c.get("mongodb", "mongoConnectionUrl")
@@ -21,8 +20,3 @@ class AbstractTestCase(unittest.TestCase):
         with open(file, 'r') as content_file:
             content = content_file.read()
         return content
-
-    @staticmethod
-    def suite():
-        test_suite = unittest.TestSuite()
-        return test_suite

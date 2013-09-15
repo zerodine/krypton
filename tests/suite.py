@@ -6,8 +6,8 @@ from tests import GpgModelTest, JsonParserTest
 
 def suite():
     test_suite = unittest.TestSuite()
-    test_suite.addTest(GpgModelTest.suite())
-    test_suite.addTest(JsonParserTest.suite())
+    test_suite.addTest(GpgModelTest.getSuite())
+    test_suite.addTest(JsonParserTest.getSuite())
     return test_suite
 
 if __name__ == "__main__":

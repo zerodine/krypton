@@ -28,16 +28,36 @@ class GpgModel(MongoBackend):
         return self.create(data=data, collection=self.collection, id=keyId)
 
     def retrieveKey(self, keyId):
-        x = self.read(id=keyId, collection=self.collection,fields=['keytext'])
+        x = self.read(id=keyId, collection=self.collection, fields=['keytext'])
         if "keytext" in x:
             return x["keytext"]
         return None
 
+    def search(self, searchString):
+        hex = "0x"
+        if str(searchString).lower().startswith(hex):
+            return self.searchKeyId(searchString[len(hex):])
+        return self.searchKey(searchString)
+
     def searchKeyId(self, keyId):
-        pass
+        print "Search for keyid: %s" % keyId
+        query = {
+            "$or": [
+                {'fingerprint': {'$regex': keyId} },
+                {'PublicSubkeyPacket.fingerprint': {'$regex': keyId}}
+            ]
+        }
+        return self.runQuery(collection="%sDetails" % self.collection, query=query)
 
     def searchKey(self, searchString):
-        pass
+        print "Search for String: %s" % searchString
+        query = {
+            "$or": [
+                {'UserIDPacket.user': {'$regex': searchString}}
+            ]
+        }
+        return self.runQuery(collection="%sDetails" % self.collection, query=query)
+
 
     def cleanTestCollections(self):
         if self.collection.lower().startswith("test"):
