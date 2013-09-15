@@ -3,6 +3,8 @@ __author__ = 'thospy'
 import json
 import pgpdump
 import base64
+import hashlib
+
 
 class JsonParser(object):
     _raw = None
@@ -10,6 +12,7 @@ class JsonParser(object):
         "publickey": None,
         "packages":[],
     }
+    _primaries = []
 
     def __init__(self, asciiData):
         self._raw = pgpdump.AsciiData(asciiData)
@@ -29,7 +32,7 @@ class JsonParser(object):
 
                 data[className].append(method(p))
         if pretty:
-            return json.dumps(data, indent=4, sort_keys=True)
+            return json.dumps(data, indent=4, sort_keys=False)
         if raw:
             return json.loads(json.dumps(data))
         return json.dumps(data)
@@ -73,21 +76,31 @@ class JsonParser(object):
         return data
 
     def parseUserIDPacket(self, packet):
+        primary = False
+        if packet["packet"].user == self._primaries["UserIDPacket"]:
+            primary = True
+
         data = {
             "user":         packet["packet"].user,
             "user_name":    packet["packet"].user_name,
             "user_email":   packet["packet"].user_email,
+            "primary":      primary,
             "signatures":   self.parseSignaturePacket(packet["signatures"])
         }
+        #print packet["packet"].user
         return self._serialize(data)
 
     def parseUserAttributePacket(self, packet):
-        self.raw_image_format = None
-        self.image_format = None
-        self.image_data = None
+        #self.raw_image_format = None
+        #self.image_format = None
+        #self.image_data = None
+        h = hashlib.new('sha1')
+        h.update(packet["packet"].image_data)
         data = {
              "image_format":        packet["packet"].image_format,
              "image_data":          packet["packet"].image_data,
+             "hash":                h.hexdigest(),
+             "hash_algorithm":      "sha1"
         }
         return self._serialize(data)
 
@@ -112,7 +125,9 @@ class JsonParser(object):
 
     def _organizeData(self):
         x = None
-
+        self._primaries = {
+            "UserIDPacket": ""
+        }
         for packet in self._raw.packets():
             packet.parse()
 
@@ -128,6 +143,7 @@ class JsonParser(object):
                 if x is not None:
                     self._organized["packages"].append(x)
                 x = {"packet":packet, "signatures":[]}
+                self._primaries["UserIDPacket"] = packet.user
                 #pprint(vars(packet))
 
             elif isinstance(packet, pgpdump.packet.SignaturePacket):
@@ -144,9 +160,11 @@ class JsonParser(object):
                     self._organized["packages"].append(x)
                 x = {"packet":packet, "signatures":[]}
 
+
             else:
                 print "NOT KNOWN: %s" % packet
 
             #print packet.fingerprint
         if x is not None:
             self._organized["packages"].append(x)
+
