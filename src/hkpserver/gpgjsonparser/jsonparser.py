@@ -134,7 +134,9 @@ class JsonParser(object):
     def _serialize(self, data):
         for k, v in data.iteritems():
             t = str(v.__class__.__name__).lower()
-            if t == "str":
+            if not v:
+                data[k] = ""
+            elif t == "str":
                 continue
             elif t == "int":
                 data[k] = str(v)

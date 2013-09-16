@@ -68,6 +68,10 @@ class LookupController(BaseController):
         self.write("Index")
 
     def op_vindex(self):
+        if self.machineReadable:
+            self.op_index()
+            return
+        
         data = self._getData()
         print data
         self.write("Verbose Index")

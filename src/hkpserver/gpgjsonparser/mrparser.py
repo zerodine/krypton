@@ -109,7 +109,7 @@ class MrParser(object):
             "keyid":key["key_id"],
             "algo":key["raw_pub_algorithm"],
             "keylen":key["key_lenght"],
-            "creationdate":key["creation_time"],
+            "creationdate":key["raw_creation_time"],
             "expirationdate":key["expiration_time"],
             "flags":""
         })
