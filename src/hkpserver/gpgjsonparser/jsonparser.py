@@ -4,19 +4,26 @@ import json
 import pgpdump
 import base64
 import hashlib
+import math
 
 
 class JsonParser(object):
     _raw = None
-    _organized = {
-        "publickey": None,
-        "packages":[],
-    }
+    _organized = {}
     _primaries = []
 
     def __init__(self, asciiData):
+        self.reset()
         self._raw = pgpdump.AsciiData(asciiData)
         self._organizeData()
+
+    def reset(self):
+        self._raw = None
+        self._organized = {
+            "publickey": None,
+            "packages":[],
+        }
+        self._primaries = []
 
     def dump(self, pretty=False, raw=False):
         data = self.parsePublicKeyPacket(self._organized['publickey'])
@@ -31,13 +38,16 @@ class JsonParser(object):
                     data[className] = []
 
                 data[className].append(method(p))
+
+        self._primaries = []
+
         if pretty:
             return json.dumps(data, indent=4, sort_keys=False)
         if raw:
-            return json.loads(json.dumps(data))
-        return json.dumps(data)
+            return json.loads(json.dumps(data, sort_keys=False))
+        return json.dumps(data, sort_keys=False)
 
-    def parsePublicKeyPacket(self, packet):
+    def parsePublicKeyPacket(self, packet, sub=False):
         data = {
             "key_id":               packet.key_id,
             "fingerprint":          packet.fingerprint,
@@ -48,13 +58,21 @@ class JsonParser(object):
             "expiration_time":      packet.expiration_time,
             "pub_algorithm":        packet.pub_algorithm,
             "pub_algorithm_type":   packet.pub_algorithm_type,
+            "raw_pub_algorithm":    packet.raw_pub_algorithm,
             "modulus":              "LONGINT:%s" % packet.modulus,
             "exponent":             packet.exponent,
             "prime":                packet.prime,
             "group_order":          packet.group_order,
             "group_gen":            packet.group_gen,
             "key_value":            packet.key_value,
+            "key_lenght":           int(math.log(packet.modulus, 2)) + 1
         }
+
+        # adding primary references
+        if not sub:
+            for key, val in  self._primaries.iteritems():
+                data["primary_%s" % key] = val
+
         return self._serialize(data)
 
     def parseSignaturePacket(self, signatures = [] ):
@@ -91,21 +109,25 @@ class JsonParser(object):
         return self._serialize(data)
 
     def parseUserAttributePacket(self, packet):
-        #self.raw_image_format = None
-        #self.image_format = None
-        #self.image_data = None
         h = hashlib.new('sha1')
         h.update(packet["packet"].image_data)
+        hashval = h.hexdigest()
+
+        primary = False
+        if hashval == self._primaries["UserAttributePacket"]:
+            primary = True
+
         data = {
              "image_format":        packet["packet"].image_format,
              "image_data":          packet["packet"].image_data,
-             "hash":                h.hexdigest(),
+             "hash":                hashval,
+             "primary":             primary,
              "hash_algorithm":      "sha1"
         }
         return self._serialize(data)
 
     def parsePublicSubkeyPacket(self, packet):
-        data = self.parsePublicKeyPacket(packet["packet"])
+        data = self.parsePublicKeyPacket(packet["packet"], sub=True)
         data["signatures"] = self.parseSignaturePacket(packet["signatures"])
         return data
 
@@ -126,7 +148,8 @@ class JsonParser(object):
     def _organizeData(self):
         x = None
         self._primaries = {
-            "UserIDPacket": ""
+            "UserIDPacket": "",
+            "UserAttributePacket": ""
         }
         for packet in self._raw.packets():
             packet.parse()
@@ -160,6 +183,10 @@ class JsonParser(object):
                     self._organized["packages"].append(x)
                 x = {"packet":packet, "signatures":[]}
 
+                h = hashlib.new('sha1')
+                h.update(packet.image_data)
+                self._primaries["UserAttributePacket"] = h.hexdigest()
+
 
             else:
                 print "NOT KNOWN: %s" % packet
@@ -168,3 +195,4 @@ class JsonParser(object):
         if x is not None:
             self._organized["packages"].append(x)
 
+        print self._primaries

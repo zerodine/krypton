@@ -21,26 +21,32 @@ class MongoBackend(object):
             self.db = self._c[db]
             self.connected = True
 
+    def _collection(self, collection):
+        x = self.db[collection]
+        x.DESCENDING = 0
+        x.ASCENDING = 0
+        return x
+
     def exists(self, collection, id):
-        return self.db[collection].find_one({"_id": id}, fields=[])
+        return self._collection(collection).find_one({"_id": id}, fields=[])
 
     def create(self, collection, data, id = None):
         if id is not None:
             data["_id"] = id
-        return self.db[collection].insert(data)
+        return self._collection(collection).insert(data)
 
     def update(self, collection, data, id):
-        return self.db[collection].update({"_id": id}, data)
+        return self._collection(collection).update({"_id": id}, data)
 
     def read(self, collection, id, fields=None):
-        return self.db[collection].find_one({"_id": id}, fields=fields)
+        return self._collection(collection).find_one({"_id": id}, fields=fields)
 
     def delete(self, collection, id):
         pass
 
     def runQuery(self, collection, query):
         data = []
-        for x in self.db[collection].find(query):
+        for x in self._collection(collection).find(query):
             data.append(x)
         return data
 

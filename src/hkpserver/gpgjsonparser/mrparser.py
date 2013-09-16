@@ -107,8 +107,8 @@ class MrParser(object):
         '''
         return "pub:%(keyid)s:%(algo)s:%(keylen)s:%(creationdate)s:%(expirationdate)s:%(flags)s" % ({
             "keyid":key["key_id"],
-            "algo":key["pub_algorithm_type"],
-            "keylen":"???",
+            "algo":key["raw_pub_algorithm"],
+            "keylen":key["key_lenght"],
             "creationdate":key["creation_time"],
             "expirationdate":key["expiration_time"],
             "flags":""
