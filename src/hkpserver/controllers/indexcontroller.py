@@ -12,4 +12,6 @@ class IndexController(BaseController):
 
     def get(self, *args, **kwargs):
         loader = tornado.template.Loader("src/hkpserver/views")
-        self.write(loader.load("index.template.html").generate())
+        self.write(loader.load("index.template.html").generate(
+            current="Home"
+        ))

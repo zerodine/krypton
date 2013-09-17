@@ -1,28 +1,47 @@
 {% extends "themes/default.theme.html" %}
-{% block title %}Public Key Server -- Get ``0x%(fingerprint)s, ''{% end %}
+{% block title %}Public Key Server -- Search {{ searchString }}{% end %}
 
 {% block body %}
-<h1>Search results for 'spycher'</h1><pre>Type bits/keyID     Date       User ID
-</pre><hr><pre>
-pub  2048R/<a href="/pks/lookup?op=get&search=0xCF96B54D3E08F9F5">3E08F9F5</a> 2013-05-07 <a href="/pks/lookup?op=vindex&search=0xCF96B54D3E08F9F5">Thomas Spycher &lt;me@tspycher.com&gt;</a>
-                               Thomas Spycher &lt;thomas.spycher@tech.swisssign.com&gt;
-                               [user attribute packet]
-</pre><hr><pre>
-pub  2048R/<a href="/pks/lookup?op=get&search=0x2ADD227E71C20E7F">71C20E7F</a> 2013-01-09 <a href="/pks/lookup?op=vindex&search=0x2ADD227E71C20E7F">Samuel Spycher &lt;sam.spycher@deep-impact.ch&gt;</a>
-</pre><hr><pre>
-pub  2048R/<a href="/pks/lookup?op=get&search=0x53B0CBE84005BD8F">4005BD8F</a> 2011-04-11 <a href="/pks/lookup?op=vindex&search=0x53B0CBE84005BD8F">Sam Spycher &lt;sam@spycher.info&gt;</a>
-</pre><hr><pre>
-pub  1024D/<a href="/pks/lookup?op=get&search=0xC741C3A15D1040B0">5D1040B0</a> 2008-01-28 <a href="/pks/lookup?op=vindex&search=0xC741C3A15D1040B0">Thomas Spycher (Private) &lt;me@spychernet.com&gt;</a>
-                               Thomas Spycher (System and Network Administrator) &lt;tom@day.com&gt;
-                               Thomas Spycher (System and Network Administrator) &lt;tspycher@day.com&gt;
-                               Thomas Spycher (System and Network Administrator) &lt;thomas.spycher@day.com&gt;
-</pre><hr><pre>
-pub  1024D/<a href="/pks/lookup?op=get&search=0x07E7597B193B788A">193B788A</a> 2008-01-28 <a href="/pks/lookup?op=vindex&search=0x07E7597B193B788A">Thomas Spycher (System and Network Administrator) &lt;tspycher@day.com&gt;</a>
-</pre><hr><pre>
-pub  1024D/<a href="/pks/lookup?op=get&search=0x73F4FE37EEB09241">EEB09241</a> 2006-11-06 <a href="/pks/lookup?op=vindex&search=0x73F4FE37EEB09241">Oliver Spycher (kein) &lt;oliver.spycher@gmx.net&gt;</a>
-</pre><hr><pre>
-pub  1024D/<a href="/pks/lookup?op=get&search=0xBE44C14C74B5D75C">74B5D75C</a> 2003-11-05 <a href="/pks/lookup?op=vindex&search=0xBE44C14C74B5D75C">Martin Spycher &lt;Martin@Spycher.com&gt;</a>
-</pre><hr><pre>
-pub  1024D/<a href="/pks/lookup?op=get&search=0x4F440D9B6422707D">6422707D</a> 2001-09-26 <a href="/pks/lookup?op=vindex&search=0x4F440D9B6422707D">Urs Spycher &lt;spycu@hta-bi.bfh.ch&gt;</a>
-</pre>
+    <h1>Search results for '{{ searchString }}'</h1>
+    <div class="row">
+        <div class="col-md-1">Type</div>
+        <div class="col-md-2">bits/keyID</div>
+        <div class="col-md-2">Date</div>
+        <div class="col-md-4">User ID</div>
+    </div>
+
+    {% for gpgkey in gpgkeys %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <div class="row">
+            <div class="col-md-1">pub</div>
+            <div class="col-md-2">{{ gpgkey["key_lenght"] }}R/<a href="/pks/lookup?op=get&search=0x{{ gpgkey["key_id"] }}">{{ gpgkey["key_id"] }}</a></div>
+            <div class="col-md-2">{{ gpgkey["creation_time"] }}</div>
+            <div class="col-md-4"><a href="/pks/lookup?op=vindex&search=0x{{ gpgkey["key_id"] }}">{{ gpgkey["primary_UserIDPacket"] }}</a></div>
+        </div>
+      </div>
+      <div class="panel-body">
+        {% for userid in gpgkey['UserIDPacket'] %}
+            <div class="row">
+                <div class="col-md-2">&nbsp;</div>
+                <div class="col-md-4">{{ userid['user'] }}</div>
+            </div>
+        {% end %}
+
+        {% for userattribute in gpgkey['UserAttributePacket'] %}
+            <div class="row">
+                <div class="col-md-2">&nbsp;</div>
+                <div class="col-md-4">[user attribute packet]</div>
+            </div>
+        {% end %}
+
+        {% if showFingerprint %}
+            <div class="row">
+                <div class="col-md-2">&nbsp;</div>
+                <div class="col-md-4">Fingerprint={{ gpgkey['fingerprint'] }}</div>
+            </div>
+        {% end %}
+      </div>
+    </div>
+    {% end %}
 {% end %}

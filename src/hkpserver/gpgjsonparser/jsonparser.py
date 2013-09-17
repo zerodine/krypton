@@ -54,6 +54,10 @@ class JsonParser(object):
     def parsePublicKeyPacket(self, packet, sub=False):
         data = {
             "key_id":               packet.key_id,
+            "key_id_32":            packet.fingerprint[-8:],
+            "key_id_64":            packet.fingerprint[-16:],
+            "fingerprint_v3":       packet.fingerprint[-32:],
+            "fingerprint_v4":       packet.fingerprint[-40:],
             "fingerprint":          packet.fingerprint,
             "pubkey_version":       packet.pubkey_version,
             "raw_creation_time":    packet.raw_creation_time,

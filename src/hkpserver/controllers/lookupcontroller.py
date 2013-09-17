@@ -68,7 +68,16 @@ class LookupController(BaseController):
             return
 
         loader = tornado.template.Loader("src/hkpserver/views")
-        self.write(loader.load("gpgindex.template.html").generate( ))
+
+        template = "gpgindex.template.html"
+        if verbose:
+            template = "gpgvindex.template.html"
+        print template
+        self.write(loader.load(template).generate(
+            current="Lookup",
+            gpgkeys=data,
+            showFingerprint=self.fingerprint,
+            searchString=self.searchString))
 
     def op_vindex(self):
         if self.machineReadable:
@@ -96,6 +105,7 @@ class LookupController(BaseController):
             return
         loader = tornado.template.Loader("src/hkpserver/views")
         self.write(loader.load("gpgkey.template.html").generate(
+            current="Get",
             fingerprint=self.searchString.upper(),
             key=key
         ))

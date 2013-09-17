@@ -17,4 +17,5 @@ class AddController(BaseController):
 
         self.gpgModel.connect(db=self.config.mongoDatabase)
         self.gpgModel.uploadKey(self._rawKey)
+        self.redirect(url="/index.html")
 

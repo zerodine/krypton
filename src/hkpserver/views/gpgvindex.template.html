@@ -1,0 +1,89 @@
+{% extends "themes/default.theme.html" %}
+{% block title %}Public Key Server -- Search {{ searchString }}{% end %}
+
+{% block body %}
+    <h1>Search results for '{{ searchString }}'</h1>
+    <div class="row">
+        <div class="col-md-1">Type</div>
+        <div class="col-md-2">bits/keyID</div>
+        <div class="col-md-2">cr. time</div>
+        <div class="col-md-2">exp time</div>
+        <div class="col-md-2">key expir</div>
+    </div>
+
+    {% for gpgkey in gpgkeys %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div class="row">
+            <div class="col-md-1">pub</div>
+            <div class="col-md-2">{{ gpgkey["key_lenght"] }}R/<a href="/pks/lookup?op=get&search=0x{{ gpgkey["key_id"] }}">{{ gpgkey["key_id"] }}</a></div>
+            <div class="col-md-2">{{ gpgkey["creation_time"] }}</div>
+            <div class="col-md-2">??</div>
+            <div class="col-md-2">??</div>
+        </div>
+        {% if showFingerprint %}
+            <div class="row">
+                <div class="col-md-2">&nbsp;</div>
+                <div class="col-md-4">Fingerprint={{ gpgkey['fingerprint'] }}</div>
+            </div>
+        {% end %}
+        {% for userid in gpgkey['UserIDPacket'] %}
+            <div class="row">
+                <div class="col-md-1">uid</div>
+                <div class="col-md-5">{{ userid['user'] }}</div>
+            </div>
+            {% for signature in userid['signatures'] %}
+            <div class="row">
+                <div class="col-md-1">sig</div>
+                <div class="col-md-1">sig2</div>
+                <div class="col-md-2"><a href="/pks/lookup?op=get&search=0xCF96B54D3E08F9F5">3E08F9F5</a></div>
+                <div class="col-md-1">2013-05-07</div>
+                <div class="col-md-1">__________</div>
+                <div class="col-md-1">2017-05-07</div>
+                <div class="col-md-3"><a href="/pks/lookup?op=vindex&search=0xCF96B54D3E08F9F5">[selfsig]</a></div>
+            </div>
+            {% end %}
+        {% end %}
+
+        {% for userattribute in gpgkey['UserAttributePacket'] %}
+            <div class="row">
+                <div class="col-md-2">uat</div>
+                <div class="col-md-4">[contents omitted]</div>
+            </div>
+            {% for signature in userid['signatures'] %}
+                <div class="row">
+                    <div class="col-md-1">sig</div>
+                    <div class="col-md-1">sig2</div>
+                    <div class="col-md-2"><a href="/pks/lookup?op=get&search=0xCF96B54D3E08F9F5">3E08F9F5</a></div>
+                    <div class="col-md-1">2013-05-07</div>
+                    <div class="col-md-1">__________</div>
+                    <div class="col-md-1">2017-05-07</div>
+                    <div class="col-md-3"><a href="/pks/lookup?op=vindex&search=0xCF96B54D3E08F9F5">[selfsig]</a></div>
+                </div>
+            {% end %}
+        {% end %}
+
+        {% for subkey in gpgkey['PublicSubkeyPacket'] %}
+            <div class="row">
+                <div class="col-md-2">sub</div>
+                <div class="col-md-4">{{ subkey["key_lenght"] }}R/{{ subkey["key_id"] }}</div>
+                <div class="col-md-2">2013-05-07</div>
+
+            </div>
+            {% for signature in userid['signatures'] %}
+                <div class="row">
+                    <div class="col-md-1">sig</div>
+                    <div class="col-md-1">sbind</div>
+                    <div class="col-md-2"><a href="/pks/lookup?op=get&search=0xCF96B54D3E08F9F5">3E08F9F5</a></div>
+                    <div class="col-md-1">2013-05-07</div>
+                    <div class="col-md-1">__________</div>
+                    <div class="col-md-1">2017-05-07</div>
+                    <div class="col-md-3">[]</div>
+                </div>
+            {% end %}
+        {% end %}
+
+      </div>
+    </div>
+    {% end %}
+{% end %}
