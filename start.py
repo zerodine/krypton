@@ -1,6 +1,7 @@
+#!/usr/bin/env python
+
 __author__ = 'thospy'
 
-#!/usr/bin/env python
 
 import ConfigParser
 import argparse
@@ -9,6 +10,7 @@ import logging
 from src.hkpserver import Server, Config
 
 if __name__ == "__main__":
+    # parsing cli arguments
     parser = argparse.ArgumentParser(description='Runs the Krypton GPG Keyserver')
     parser.add_argument('--configFile', '-c',
                         dest='configFile',
@@ -18,6 +20,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    # getting a configfile parser
     c = ConfigParser.RawConfigParser(allow_no_value=True)
     c.read(args.configFile)
 
@@ -26,7 +29,6 @@ if __name__ == "__main__":
     config.mongoConnectionUrl = c.get("mongodb", "mongoConnectionUrl")
     config.mongoCollection = c.get("mongodb", "mongoCollection")
     server = Server(config=config)
-
 
     # set up logging to file - see previous section for more details
     logging.basicConfig(level=logging.DEBUG,

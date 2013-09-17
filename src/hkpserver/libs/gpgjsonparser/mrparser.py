@@ -82,17 +82,31 @@ __author__ = 'thospy'
 
 import logging
 
+
 class MrParser(object):
+    """
+
+    """
+
     version = 1
     logger = logging.getLogger("krypton")
 
     _raw = []
+
     def __init__(self, jsonData):
+        """
+
+        :param jsonData:
+        """
         self._raw = jsonData
 
     def parse(self):
-        data = []
-        data.append(self._start())
+        """
+
+
+        :return:
+        """
+        data = [self._start()]
         for key in self._raw:
             data.append(self._listKey(key))
             data.append(self._listUid(key))
@@ -100,47 +114,52 @@ class MrParser(object):
         return "\n".join(data)
 
     def _start(self):
-        '''
+        """
         info:<version>:<count>
-        '''
+        """
         return "info:%i:%i" % (self.version, len(self._raw))
 
     def _listKey(self, key):
-        '''
+        """
         pub:<keyid>:<algo>:<keylen>:<creationdate>:<expirationdate>:<flags>
-        '''
+
+        :param key:
+        """
         return "pub:%(keyid)s:%(algo)s:%(keylen)s:%(creationdate)s:%(expirationdate)s:%(flags)s" % ({
-            "keyid":key["key_id"],
-            "algo":key["raw_pub_algorithm"],
-            "keylen":key["key_lenght"],
-            "creationdate":key["raw_creation_time"],
-            "expirationdate":key["expiration_time"],
-            "flags":""
+            "keyid": key["key_id"],
+            "algo": key["raw_pub_algorithm"],
+            "keylen": key["key_lenght"],
+            "creationdate": key["raw_creation_time"],
+            "expirationdate": key["expiration_time"],
+            "flags": ""
         })
 
     def _listUat(self, key):
-        '''
+        """
         uat::::
-        '''
+        """
         if not "UserAttributePacket" in key:
             return ""
 
         data = []
-        for id in key["UserAttributePacket"]:
+        for idVal in key["UserAttributePacket"]:
             data.append("uat::::")
         return "\n".join(data)
 
     def _listUid(self, key):
-        '''
+        """
         uid:<escaped uid string>:<creationdate>:<expirationdate>:<flags>
-        '''
+
+        :param key:
+        """
         data = []
         for id in key["UserIDPacket"]:
-            data.append("uid:%(uidstring)s:%(creationdate)s:%(expirationdate)s:%(flags)s" % ({
-                "uidstring":id["user"],
-                "creationdate":"",
-                "expirationdate":"",
-                "flags":""
+            data.append("uid:%(uidstring)s:%(creationdate)s:%(expirationdate)s:%(flags)s" % (
+                {
+                "uidstring": id["user"],
+                "creationdate": "",
+                "expirationdate": "",
+                "flags": ""
                 })
             )
         return "\n".join(data)

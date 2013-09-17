@@ -3,11 +3,20 @@ __author__ = 'thospy'
 from src.hkpserver.libs.gpgmongo.mongobackend import MongoBackend
 from src.hkpserver.libs.gpgjsonparser import JsonParser
 
+
 class GpgModel(MongoBackend):
+    """
+
+    """
 
     collection = "publicKeys"
 
     def uploadKey(self, asciiArmoredKey):
+        """
+
+        :param asciiArmoredKey:
+        :return:
+        """
         j = JsonParser(asciiData=asciiArmoredKey)
         jsonAsciiArmoredKey = j.dump(raw=True)
         keyId = jsonAsciiArmoredKey["fingerprint"]
@@ -28,18 +37,35 @@ class GpgModel(MongoBackend):
         return self.create(data=data, collection=self.collection, id=keyId)
 
     def retrieveKey(self, keyId):
+        """
+
+        :param keyId:
+        :return:
+        """
         x = self.read(id=keyId, collection=self.collection, fields=['keytext'])
         if x and "keytext" in x:
             return x["keytext"]
         return None
 
-    def search(self, searchString, exact = False):
-        hex = "0x"
-        if str(searchString).lower().startswith(hex):
-            return self.searchKeyId(searchString[len(hex):], exact)
+    def search(self, searchString, exact=False):
+        """
+
+        :param searchString:
+        :param exact:
+        :return:
+        """
+        hexIndicator = "0x"
+        if str(searchString).lower().startswith(hexIndicator):
+            return self.searchKeyId(searchString[len(hexIndicator):], exact)
         return self.searchKey(searchString, exact)
 
     def searchKeyId(self, keyId, exact=False):
+        """
+
+        :param keyId:
+        :param exact:
+        :return:
+        """
         if exact:
             search = keyId
         else:
@@ -55,6 +81,12 @@ class GpgModel(MongoBackend):
         return self.runQuery(collection="%sDetails" % self.collection, query=query)
 
     def searchKey(self, searchString, exact=False):
+        """
+
+        :param searchString:
+        :param exact:
+        :return:
+        """
         # in keyword search we simply ignore the exact parameter
         if exact:
             pass
@@ -66,8 +98,12 @@ class GpgModel(MongoBackend):
         }
         return self.runQuery(collection="%sDetails" % self.collection, query=query)
 
-
     def cleanTestCollections(self):
+        """
+
+
+        :return:
+        """
         if self.collection.lower().startswith("test"):
             self.removeCollection(self.collection)
             self.removeCollection("%sDetails" % self.collection)

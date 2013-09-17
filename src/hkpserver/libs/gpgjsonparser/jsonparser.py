@@ -9,17 +9,29 @@ import logging
 
 
 class JsonParser(object):
+    """
+
+    """
+
     _raw = None
     _organized = {}
     _primaries = []
     logger = logging.getLogger("krypton")
 
     def __init__(self, asciiData):
+        """
+
+        :param asciiData:
+        """
         self.reset()
         self._raw = pgpdump.AsciiData(asciiData)
         self._organizeData()
 
     def reset(self):
+        """
+
+
+        """
         self._raw = None
         self._organized = {
             "publickey": None,
@@ -28,6 +40,12 @@ class JsonParser(object):
         self._primaries = []
 
     def dump(self, pretty=False, raw=False):
+        """
+
+        :param pretty:
+        :param raw:
+        :return:
+        """
         data = self.parsePublicKeyPacket(self._organized['publickey'])
 
         for p in self._organized["packages"]:
@@ -52,6 +70,12 @@ class JsonParser(object):
         return json.dumps(data, sort_keys=False)
 
     def parsePublicKeyPacket(self, packet, sub=False):
+        """
+
+        :param packet:
+        :param sub:
+        :return:
+        """
         data = {
             "key_id": packet.key_id,
             "key_id_32": packet.fingerprint[-8:],
@@ -85,12 +109,14 @@ class JsonParser(object):
 
         return self._serialize(data)
 
-    def parseSignaturePacket(self, signatures=[]):
+    def parseSignaturePacket(self, signatures=None):
         """
 
         :param signatures:
         :return:
         """
+        if not signatures:
+            signatures = []
         data = []
         for s in signatures:
             data.append(self._serialize({
@@ -179,6 +205,10 @@ class JsonParser(object):
         return data
 
     def _organizeData(self):
+        """
+
+
+        """
         x = None
         self._primaries = {
             "UserIDPacket": "",

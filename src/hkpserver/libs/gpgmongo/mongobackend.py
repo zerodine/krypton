@@ -5,6 +5,9 @@ import logging
 
 
 class MongoBackend(object):
+    """
+
+    """
 
     _c = None
     db = None
@@ -14,25 +17,51 @@ class MongoBackend(object):
     logger = logging.getLogger("krypton.mongo")
 
     def __init__(self, connectionUrl):
+        """
+
+        :param connectionUrl:
+        """
         self.connectionUrl = connectionUrl
 
     def connect(self, db):
+        """
+
+        :param db:
+        """
         if not self.connected:
             self._c = pymongo.MongoClient(self.connectionUrl)
             self.db = self._c[db]
             self.connected = True
 
     def _collection(self, collection):
+        """
+
+        :param collection:
+        :return:
+        """
         x = self.db[collection]
         x.DESCENDING = 0
         x.ASCENDING = 0
         return x
 
     def exists(self, collection, id):
+        """
+
+        :param collection:
+        :param id:
+        :return:
+        """
         self.logger.debug("Checking for existence of id %s in collection %s" % (id, collection))
         return self._collection(collection).find_one({"_id": id}, fields=[])
 
-    def create(self, collection, data, id = None):
+    def create(self, collection, data, id=None):
+        """
+
+        :param collection:
+        :param data:
+        :param id:
+        :return:
+        """
         self.logger.debug("Create Record in collection %s" % collection)
 
         if id is not None:
@@ -40,17 +69,42 @@ class MongoBackend(object):
         return self._collection(collection).insert(data)
 
     def update(self, collection, data, id):
+        """
+
+        :param collection:
+        :param data:
+        :param id:
+        :return:
+        """
         self.logger.debug("Updating Record with id %s in collection %s" % (id, collection))
         return self._collection(collection).update({"_id": id}, data)
 
     def read(self, collection, id, fields=None):
+        """
+
+        :param collection:
+        :param id:
+        :param fields:
+        :return:
+        """
         self.logger.debug("Read record with id %s in collection %s" % (id, collection))
         return self._collection(collection).find_one({"_id": {"$regex": id}}, fields=fields)
 
     def delete(self, collection, id):
+        """
+
+        :param collection:
+        :param idValue:
+        """
         pass
 
     def runQuery(self, collection, query):
+        """
+
+        :param collection:
+        :param query:
+        :return:
+        """
         self.logger.debug("Run Query: %s in collection %s" % (str(query), collection))
 
         data = []
@@ -59,4 +113,9 @@ class MongoBackend(object):
         return data
 
     def removeCollection(self, collection):
+        """
+
+        :param collection:
+        :return:
+        """
         return self.db.drop_collection(collection)

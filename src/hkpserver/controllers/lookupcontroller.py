@@ -7,6 +7,9 @@ from src.hkpserver.libs.gpgjsonparser import MrParser
 
 
 class LookupController(BaseController):
+    """
+
+    """
 
     options = []
     machineReadable = False
@@ -18,11 +21,21 @@ class LookupController(BaseController):
     searchString = None
 
     @staticmethod
-    def routes(prefix = "", config = None):
-        #return (r"%s/lookup(.*)" % prefix, "LookupController", dict(config=config))
-        return (r"%s/lookup(.*)" % prefix, LookupController, dict(config=config))
+    def routes(prefix="", config=None):
+        """
+
+        :param prefix:
+        :param config:
+        :return:
+        """
+        return r"%s/lookup(.*)" % prefix, LookupController, dict(config=config)
 
     def get(self, *args, **kwargs):
+        """
+
+        :param args:
+        :param kwargs:
+        """
         # Parsing Options
         self.options = str(self.get_argument("options", default=None, strip=False)).lower().split(",")
         self._parseOptions()
@@ -40,15 +53,24 @@ class LookupController(BaseController):
         getattr(self, "op_%s" % str(op).lower())(**kwargs)
 
     def _parseSearch(self, searchString):
-        hex = "0x"
+        """
+
+        :param searchString:
+        """
+        hexIndicator = "0x"
         s = str(searchString)
-        if s.lower().startswith(hex):
+        if s.lower().startswith(hexIndicator):
             self.searchHex = True
-            s = s[len(hex):]
+            s = s[len(hexIndicator):]
 
         self.searchString = s
 
     def _parseOtherOptions(self, fingerprint, exact):
+        """
+
+        :param fingerprint:
+        :param exact:
+        """
         on = "on"
         if on in str(fingerprint).lower():
             self.fingerprint = True
@@ -56,12 +78,21 @@ class LookupController(BaseController):
             self.exact = True
 
     def _parseOptions(self):
+        """
+
+
+        """
         if "mr" in self.options:
             self.machineReadable = True
         if "nm" in self.options:
             self.noModification = True
 
-    def op_index(self, verbose = False):
+    def op_index(self, verbose=False):
+        """
+
+        :param verbose:
+        :return:
+        """
         data = self._getData()
         if self.machineReadable:
             self.set_header("Content-Type", "text/plain")
@@ -81,6 +112,11 @@ class LookupController(BaseController):
             searchString=self.searchString))
 
     def op_vindex(self):
+        """
+
+
+        :return:
+        """
         if self.machineReadable:
             self.op_index()
             return
@@ -89,6 +125,11 @@ class LookupController(BaseController):
         return
 
     def _getData(self):
+        """
+
+
+        :return:
+        """
         self.gpgModel.connect(db=self.config.mongoDatabase)
 
         if self.searchHex:
@@ -96,6 +137,12 @@ class LookupController(BaseController):
         return self.gpgModel.searchKey(searchString=self.searchString, exact=self.exact)
 
     def op_get(self):
+        """
+
+
+        :return:
+        """
+        key = None
         self.gpgModel.connect(db=self.config.mongoDatabase)
         if self.searchHex:
             key = self.gpgModel.retrieveKey(keyId=self.searchString)
@@ -110,13 +157,3 @@ class LookupController(BaseController):
             fingerprint=self.searchString.upper(),
             key=key
         ))
-
-        """self.write('''<html>
-            <head>
-                <title>Public Key Server -- Get ``0x%(fingerprint)s, ''</title>
-            </head>
-            <body>
-                <h1>Public Key Server -- Get ``0x%(fingerprint)s, ''</h1>
-                <pre>%(key)s</pre>
-            </body>
-        </html>''' % {"fingerprint": self.searchString.upper(), "key":key})"""

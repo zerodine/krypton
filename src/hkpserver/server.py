@@ -14,6 +14,10 @@ from controllers import *
 
 
 class Server(object):
+    """
+
+    """
+
     controllers = ['Lookup', 'Add', 'Index']
     routes = []
     routePrefix = None
@@ -21,10 +25,19 @@ class Server(object):
     logger = logging.getLogger("krypton")
 
     def __init__(self, routePrefix="/pks", config=None):
+        """
+
+        :param routePrefix:
+        :param config:
+        """
         self.routePrefix = routePrefix
         self.config = config
 
     def _buildRoutes(self):
+        """
+
+
+        """
         static = [
             (r'/(.*)', tornado.web.StaticFileHandler, {'path': "src/hkpserver/wwwroot"})
         ]
@@ -34,6 +47,12 @@ class Server(object):
             self.routes.append(s)
 
     def start(self, port=11371, as_thread=False):
+        """
+
+        :param port:
+        :param as_thread:
+        :return:
+        """
         self._buildRoutes()
         application = tornado.web.Application(self.routes)
         application.listen(port)
@@ -45,7 +64,15 @@ class Server(object):
             self._start()
 
     def _start(self):
+        """
+
+
+        """
         tornado.ioloop.IOLoop.instance().start()
 
     def stop(self):
+        """
+
+
+        """
         tornado.ioloop.IOLoop.instance().stop()
