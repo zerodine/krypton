@@ -1,6 +1,6 @@
 __author__ = 'thospy'
 import unittest
-from src.hkpserver.gpgmongo import GpgModel
+from src.hkpserver.libs.gpgmongo import GpgModel
 from abstracttestcase import AbstractTestCase
 
 

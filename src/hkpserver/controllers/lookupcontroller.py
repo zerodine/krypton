@@ -1,8 +1,10 @@
 __author__ = 'thospy'
 
-from basecontroller import BaseController
-from src.hkpserver.gpgjsonparser import MrParser
 import tornado.template
+
+from basecontroller import BaseController
+from src.hkpserver.libs.gpgjsonparser import MrParser
+
 
 class LookupController(BaseController):
 

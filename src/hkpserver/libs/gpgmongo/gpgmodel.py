@@ -1,7 +1,7 @@
 __author__ = 'thospy'
 
-from mongobackend import MongoBackend
-from src.hkpserver.gpgjsonparser import JsonParser
+from src.hkpserver.libs.gpgmongo.mongobackend import MongoBackend
+from src.hkpserver.libs.gpgjsonparser import JsonParser
 
 class GpgModel(MongoBackend):
 

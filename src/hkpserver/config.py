@@ -6,3 +6,5 @@ class Config(object):
     mongoDatabase = None
     mongoCollection = None
     logger = None
+
+    serverPort = 11371
