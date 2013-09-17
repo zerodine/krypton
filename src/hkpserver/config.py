@@ -10,3 +10,4 @@ class Config(object):
     mongoDatabase = None
     mongoCollection = None
     logger = None
+    sksServers = None

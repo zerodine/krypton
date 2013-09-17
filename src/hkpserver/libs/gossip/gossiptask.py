@@ -16,7 +16,7 @@ class GossipTask(object):
         self.keyId = keyId
         self.asciiArmoredKey = asciiArmoredKey
         self.toServer = toServer
-        self.toServerPort = toServerPort
+        self.toServerPort = int(toServerPort)
 
     def doWork(self):
         http_client = httpclient.HTTPClient()

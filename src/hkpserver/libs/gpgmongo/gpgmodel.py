@@ -13,6 +13,7 @@ class GpgModel(MongoBackend):
 
     collection = "publicKeys"
     queue = None
+    gossipServers = None
 
     def uploadKey(self, asciiArmoredKey):
         """
@@ -52,12 +53,18 @@ class GpgModel(MongoBackend):
             self.create(data=jsonAsciiArmoredKey, collection="%sDetails" % self.collection, id=keyId)
 
         # Add Task to Queue for the Synchronisation
-        self.queue.put(GossipTask(
-            keyId=keyId,
-            toServer="localhost",
-            asciiArmoredKey=asciiArmoredKey,
-            toServerPort=8889)
-        )
+        server = self.gossipServers.getRandom()
+        if server:
+            self.logger.info("Created Synchronisation Task for Key %s to Server %s:%s" % (keyId, server["host"], server["port"]))
+            self.queue.put(GossipTask(
+                keyId=keyId,
+                toServer=server["host"],
+                toServerPort=server["port"],
+                asciiArmoredKey=asciiArmoredKey
+                )
+            )
+        else:
+            self.logger.info("I do not syncronize the key %s due to no sks servers are configured" % keyId)
         return True
 
     def retrieveKey(self, keyId):

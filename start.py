@@ -9,6 +9,7 @@ import argparse
 import logging
 
 from src.hkpserver import Server, Config, ApplicationContext
+from src.hkpserver.libs.gossip import GossipServers
 
 if __name__ == "__main__":
     # parsing cli arguments
@@ -35,10 +36,12 @@ if __name__ == "__main__":
     config.mongoDatabase = c.get("mongodb", "mongoDatabase")
     config.mongoConnectionUrl = c.get("mongodb", "mongoConnectionUrl")
     config.mongoCollection = c.get("mongodb", "mongoCollection")
+    config.sksServers = str(c.get("sks", "servers")).splitlines()
 
     app = ApplicationContext()
     app.config = config
     app.queue = Queue()
+    app.gossipServers = GossipServers(app.config.sksServers)
 
     server = Server(applicationContext=app)
 
