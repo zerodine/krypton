@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from Queue import Queue
 
 __author__ = 'thospy'
 
@@ -7,7 +8,7 @@ import ConfigParser
 import argparse
 import logging
 
-from src.hkpserver import Server, Config
+from src.hkpserver import Server, Config, ApplicationContext
 
 if __name__ == "__main__":
     # parsing cli arguments
@@ -17,6 +18,12 @@ if __name__ == "__main__":
                         action='store',
                         default="server.conf",
                         help='Configuration File for the Server')
+    parser.add_argument('--port', '-p',
+                        dest='port',
+                        action='store',
+                        type=int,
+                        default=8888, # default should be 11371
+                        help='Port to run the server')
 
     args = parser.parse_args()
 
@@ -28,7 +35,12 @@ if __name__ == "__main__":
     config.mongoDatabase = c.get("mongodb", "mongoDatabase")
     config.mongoConnectionUrl = c.get("mongodb", "mongoConnectionUrl")
     config.mongoCollection = c.get("mongodb", "mongoCollection")
-    server = Server(config=config)
+
+    app = ApplicationContext()
+    app.config = config
+    app.queue = Queue()
+
+    server = Server(applicationContext=app)
 
     # set up logging to file - see previous section for more details
     logging.basicConfig(level=logging.DEBUG,
@@ -47,7 +59,7 @@ if __name__ == "__main__":
     logging.getLogger('').addHandler(console)
 
     try:
-        server.start(8888)
+        server.start(args.port)
     except KeyboardInterrupt:
         logging.info('Server stopped')
     finally:

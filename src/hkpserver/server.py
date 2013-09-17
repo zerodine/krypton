@@ -1,3 +1,5 @@
+from Queue import Queue
+
 __author__ = 'thospy'
 
 import sys, threading
@@ -10,6 +12,7 @@ except ImportError:
     sys.stderr.write("Looks like you have tornado not installed. (apt-get install python-tornado)")
     sys.exit(1)
 
+from src.hkpserver.libs.gossip import Gossiping
 from controllers import *
 
 
@@ -21,17 +24,19 @@ class Server(object):
     controllers = ['Lookup', 'Add', 'Index']
     routes = []
     routePrefix = None
-    config = None
+    applicationContext = None
     logger = logging.getLogger("krypton")
+    gossiping = None
 
-    def __init__(self, routePrefix="/pks", config=None):
+    def __init__(self, routePrefix="/pks", applicationContext=None):
         """
 
         :param routePrefix:
         :param config:
         """
         self.routePrefix = routePrefix
-        self.config = config
+        self.applicationContext = applicationContext
+        self.gossiping = Gossiping(applicationContext=self.applicationContext)
 
     def _buildRoutes(self):
         """
@@ -42,7 +47,9 @@ class Server(object):
             (r'/(.*)', tornado.web.StaticFileHandler, {'path': "src/hkpserver/wwwroot"})
         ]
         for c in self.controllers:
-            self.routes.append(eval("%sController" % c).routes(self.routePrefix, config=self.config))
+            self.routes.append(eval("%sController" % c).routes(
+                prefix=self.routePrefix,
+                applicationContext=self.applicationContext))
         for s in static:
             self.routes.append(s)
 
@@ -57,6 +64,8 @@ class Server(object):
         application = tornado.web.Application(self.routes)
         application.listen(port)
         self.logger.info("Server will liston on Port: %i" % port)
+        self.gossiping.start()
+
         if as_thread:
             threading.Thread(target=self._start).start()
             return True
@@ -76,3 +85,4 @@ class Server(object):
 
         """
         tornado.ioloop.IOLoop.instance().stop()
+        self.gossiping.stop()

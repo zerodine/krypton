@@ -11,14 +11,14 @@ class AddController(BaseController):
     _rawKey = None
 
     @staticmethod
-    def routes(prefix="", config=None):
+    def routes(prefix="", applicationContext=None):
         """
 
         :param prefix:
         :param config:
         :return:
         """
-        return r"%s/add(.*)" % prefix, AddController, dict(config=config)
+        return r"%s/add(.*)" % prefix, AddController, dict(applicationContext=applicationContext)
 
     def post(self, *args, **kwargs):
         """
@@ -27,7 +27,5 @@ class AddController(BaseController):
         :param kwargs:
         """
         self._rawKey = self.get_argument("keytext", default=None, strip=False)
-
         self.gpgModel.connect(db=self.config.mongoDatabase)
         self.gpgModel.uploadKey(self._rawKey)
-        self.redirect(url="/index.html")

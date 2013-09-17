@@ -10,16 +10,19 @@ class BaseController(tornado.web.RequestHandler):
 
     """
 
+    applicationContext = None
     config = None
     gpgModel = None
     logger = logging.getLogger("krypton")
 
-    def initialize(self, config=None):
+    def initialize(self, applicationContext=None):
         """
 
 
         :param config:
         """
-        self.config = config
+        self.applicationContext = applicationContext
+        self.config = self.applicationContext.config
         self.gpgModel = GpgModel(connectionUrl=self.config.mongoConnectionUrl)
+        self.gpgModel.queue = self.applicationContext.queue
         self.gpgModel.collection = self.config.mongoCollection

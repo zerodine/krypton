@@ -44,7 +44,7 @@ class MongoBackend(object):
         x.ASCENDING = 0
         return x
 
-    def exists(self, collection, id):
+    def exists(self, collection, id, fields=[]):
         """
 
         :param collection:
@@ -52,7 +52,7 @@ class MongoBackend(object):
         :return:
         """
         self.logger.debug("Checking for existence of id %s in collection %s" % (id, collection))
-        return self._collection(collection).find_one({"_id": id}, fields=[])
+        return self._collection(collection).find_one({"_id": id}, fields=fields)
 
     def create(self, collection, data, id=None):
         """

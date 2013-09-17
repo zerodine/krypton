@@ -38,3 +38,4 @@ database.sqlite
 manage.py
 server.conf
 server.test.conf
+server2.conf

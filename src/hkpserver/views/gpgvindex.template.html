@@ -11,11 +11,12 @@
         <div class="col-md-2">key expir</div>
     </div>
 
+<ul class="list-group">
     {% for gpgkey in gpgkeys %}
-    <div class="panel panel-default">
-      <div class="panel-body">
+    <li class="list-group-item">
+
         <div class="row">
-            <div class="col-md-1">pub</div>
+            <div class="col-md-1"><span class="glyphicon glyphicon-lock"></span>pub</div>
             <div class="col-md-2">{{ gpgkey["key_lenght"] }}R/<a href="/pks/lookup?op=get&search=0x{{ gpgkey["key_id"] }}">{{ gpgkey["key_id"] }}</a></div>
             <div class="col-md-2">{{ gpgkey["creation_time"] }}</div>
             <div class="col-md-2">??</div>
@@ -82,8 +83,7 @@
                 </div>
             {% end %}
         {% end %}
-
-      </div>
-    </div>
+    </li>
     {% end %}
+</ul>
 {% end %}

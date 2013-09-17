@@ -10,7 +10,7 @@ class IndexController(BaseController):
     """
 
     @staticmethod
-    def routes(prefix="", config=None):
+    def routes(prefix="", applicationContext=None):
         """
 
 
@@ -19,7 +19,7 @@ class IndexController(BaseController):
         :param config:
         :return:
         """
-        return r'/(.*).html', IndexController, dict(config=config)
+        return r'/(.*).html', IndexController, dict(applicationContext=applicationContext)
 
     def get(self, *args, **kwargs):
         """

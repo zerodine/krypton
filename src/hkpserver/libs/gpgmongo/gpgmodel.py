@@ -1,8 +1,10 @@
+import hashlib
+
 __author__ = 'thospy'
 
 from src.hkpserver.libs.gpgmongo.mongobackend import MongoBackend
 from src.hkpserver.libs.gpgjsonparser import JsonParser
-
+from src.hkpserver.libs.gossip import GossipTask
 
 class GpgModel(MongoBackend):
     """
@@ -10,6 +12,7 @@ class GpgModel(MongoBackend):
     """
 
     collection = "publicKeys"
+    queue = None
 
     def uploadKey(self, asciiArmoredKey):
         """
@@ -19,22 +22,43 @@ class GpgModel(MongoBackend):
         """
         j = JsonParser(asciiData=asciiArmoredKey)
         jsonAsciiArmoredKey = j.dump(raw=True)
-        keyId = jsonAsciiArmoredKey["fingerprint"]
+        keyId = str(jsonAsciiArmoredKey["fingerprint"]).upper()
 
+        h = hashlib.new('sha1')
+        h.update(asciiArmoredKey)
+        hexValue = h.hexdigest()
         data = {
-            "keytext": asciiArmoredKey
+            "keytext": asciiArmoredKey,
+            #"inSync": False,
+            "hash": hexValue,
+            "hash_algo": "sha1",
         }
 
-        # Upload the json formated Key
+        # Upload the asciiArmored Key, but first check if key has been changed
+        existing = self.exists(id=keyId, collection=self.collection, fields=["hash", "hash_algo"])
+        if existing and hexValue == existing["hash"]:
+            self.logger.info("Key %s is unchanged, no db operations are performed" % keyId)
+            return True
+
+        if existing:
+            self.update(data=data, collection=self.collection, id=keyId)
+        else:
+            self.create(data=data, collection=self.collection, id=keyId)
+
+        # Upload the json formatted Key
         if self.exists(id=keyId, collection="%sDetails" % self.collection):
             self.update(data=jsonAsciiArmoredKey, collection="%sDetails" % self.collection, id=keyId)
         else:
             self.create(data=jsonAsciiArmoredKey, collection="%sDetails" % self.collection, id=keyId)
 
-        # Upload the asciiArmored Key
-        if self.exists(id=keyId, collection=self.collection):
-            return self.update(data=data, collection=self.collection, id=keyId)
-        return self.create(data=data, collection=self.collection, id=keyId)
+        # Add Task to Queue for the Synchronisation
+        self.queue.put(GossipTask(
+            keyId=keyId,
+            toServer="localhost",
+            asciiArmoredKey=asciiArmoredKey,
+            toServerPort=8889)
+        )
+        return True
 
     def retrieveKey(self, keyId):
         """

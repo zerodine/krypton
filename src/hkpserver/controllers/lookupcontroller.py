@@ -21,14 +21,14 @@ class LookupController(BaseController):
     searchString = None
 
     @staticmethod
-    def routes(prefix="", config=None):
+    def routes(prefix="", applicationContext=None):
         """
 
         :param prefix:
         :param config:
         :return:
         """
-        return r"%s/lookup(.*)" % prefix, LookupController, dict(config=config)
+        return r"%s/lookup(.*)" % prefix, LookupController, dict(applicationContext=applicationContext)
 
     def get(self, *args, **kwargs):
         """
