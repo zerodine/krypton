@@ -23,7 +23,7 @@ class JsonParser(object):
         self._raw = None
         self._organized = {
             "publickey": None,
-            "packages":[],
+            "packages": [],
         }
         self._primaries = []
 
@@ -53,37 +53,44 @@ class JsonParser(object):
 
     def parsePublicKeyPacket(self, packet, sub=False):
         data = {
-            "key_id":               packet.key_id,
-            "key_id_32":            packet.fingerprint[-8:],
-            "key_id_64":            packet.fingerprint[-16:],
-            "fingerprint_v3":       packet.fingerprint[-32:],
-            "fingerprint_v4":       packet.fingerprint[-40:],
-            "fingerprint":          packet.fingerprint,
-            "pubkey_version":       packet.pubkey_version,
-            "raw_creation_time":    packet.raw_creation_time,
-            "creation_time":        str(packet.creation_time),
-            "raw_days_valid":       packet.raw_days_valid,
-            "expiration_time":      packet.expiration_time,
-            "pub_algorithm":        packet.pub_algorithm,
-            "pub_algorithm_type":   packet.pub_algorithm_type,
-            "raw_pub_algorithm":    packet.raw_pub_algorithm,
-            "modulus":              "LONGINT:%s" % packet.modulus,
-            "exponent":             packet.exponent,
-            "prime":                packet.prime,
-            "group_order":          packet.group_order,
-            "group_gen":            packet.group_gen,
-            "key_value":            packet.key_value,
-            "key_lenght":           int(math.log(packet.modulus, 2)) + 1
+            "key_id": packet.key_id,
+            "key_id_32": packet.fingerprint[-8:],
+            "key_id_64": packet.fingerprint[-16:],
+            "fingerprint_v3": packet.fingerprint[-32:],
+            "fingerprint_v4": packet.fingerprint[-40:],
+            "fingerprint": packet.fingerprint,
+            "pubkey_version": packet.pubkey_version,
+            "raw_creation_time": packet.raw_creation_time,
+            "creation_time": str(packet.creation_time),
+            "raw_days_valid": packet.raw_days_valid,
+            "expiration_time": packet.expiration_time,
+            "pub_algorithm": packet.pub_algorithm,
+            "pub_algorithm_type": packet.pub_algorithm_type,
+            "raw_pub_algorithm": packet.raw_pub_algorithm,
+            "modulus": "LONGINT:%s" % packet.modulus,
+            "exponent": packet.exponent,
+            "prime": packet.prime,
+            "group_order": packet.group_order,
+            "group_gen": packet.group_gen,
+            "key_value": packet.key_value,
+
+            #TODO: check for "TypeError: a float is required"
+            "key_lenght": int(math.log(packet.modulus, 2)) + 1
         }
 
         # adding primary references
         if not sub:
-            for key, val in  self._primaries.iteritems():
+            for key, val in self._primaries.iteritems():
                 data["primary_%s" % key] = val
 
         return self._serialize(data)
 
-    def parseSignaturePacket(self, signatures = [] ):
+    def parseSignaturePacket(self, signatures=[]):
+        """
+
+        :param signatures:
+        :return:
+        """
         data = []
         for s in signatures:
             data.append(self._serialize({
@@ -102,20 +109,30 @@ class JsonParser(object):
         return data
 
     def parseUserIDPacket(self, packet):
+        """
+
+        :param packet: 
+        :return: 
+        """
         primary = False
         if packet["packet"].user == self._primaries["UserIDPacket"]:
             primary = True
 
         data = {
-            "user":         packet["packet"].user,
-            "user_name":    packet["packet"].user_name,
-            "user_email":   packet["packet"].user_email,
-            "primary":      primary,
-            "signatures":   self.parseSignaturePacket(packet["signatures"])
+            "user": packet["packet"].user,
+            "user_name": packet["packet"].user_name,
+            "user_email": packet["packet"].user_email,
+            "primary": primary,
+            "signatures": self.parseSignaturePacket(packet["signatures"])
         }
         return self._serialize(data)
 
     def parseUserAttributePacket(self, packet):
+        """
+
+        :param packet: 
+        :return: 
+        """
         h = hashlib.new('sha1')
         h.update(packet["packet"].image_data)
         hashval = h.hexdigest()
@@ -125,15 +142,22 @@ class JsonParser(object):
             primary = True
 
         data = {
-             "image_format":        packet["packet"].image_format,
-             "image_data":          packet["packet"].image_data,
-             "hash":                hashval,
-             "primary":             primary,
-             "hash_algorithm":      "sha1"
+            "image_format": packet["packet"].image_format,
+            "image_data": packet["packet"].image_data,
+            "hash": hashval,
+            "primary": primary,
+            "hash_algorithm": "sha1"
         }
         return self._serialize(data)
 
     def parsePublicSubkeyPacket(self, packet):
+        """
+
+
+        :rtype : dict
+        :param packet:
+        :return: 
+        """
         data = self.parsePublicKeyPacket(packet["packet"], sub=True)
         data["signatures"] = self.parseSignaturePacket(packet["signatures"])
         return data

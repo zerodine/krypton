@@ -74,7 +74,6 @@ class LookupController(BaseController):
         template = "gpgindex.template.html"
         if verbose:
             template = "gpgvindex.template.html"
-        print template
         self.write(loader.load(template).generate(
             current="Lookup",
             gpgkeys=data,

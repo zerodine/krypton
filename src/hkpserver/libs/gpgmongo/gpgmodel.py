@@ -29,7 +29,6 @@ class GpgModel(MongoBackend):
 
     def retrieveKey(self, keyId):
         x = self.read(id=keyId, collection=self.collection, fields=['keytext'])
-        print x
         if x and "keytext" in x:
             return x["keytext"]
         return None
