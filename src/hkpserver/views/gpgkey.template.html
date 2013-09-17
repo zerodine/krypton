@@ -1,0 +1,7 @@
+{% extends "themes/default.theme.html" %}
+{% block title %}Public Key Server -- Get ``0x%(fingerprint)s, ''{% end %}
+
+{% block body %}
+    <h1>Public Key Server -- Get ``0x{{ fingerprint }}, ''</h1>
+    <pre>{{ key }}</pre>
+{% end %}

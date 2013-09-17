@@ -5,3 +5,4 @@ class Config(object):
     mongoConnectionUrl = None
     mongoDatabase = None
     mongoCollection = None
+    logger = None

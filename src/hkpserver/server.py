@@ -1,6 +1,7 @@
 __author__ = 'thospy'
 
 import sys, threading
+import logging
 
 try:
     import tornado.ioloop
@@ -13,26 +14,33 @@ from controllers import *
 
 
 class Server(object):
-    controllers = ['Lookup', 'Add']
+    controllers = ['Lookup', 'Add', 'Index']
     routes = []
     routePrefix = None
     config = None
+    logger = logging.getLogger("krypton")
 
     def __init__(self, routePrefix = "/pks", config = None):
         self.routePrefix = routePrefix
         self.config = config
 
     def _buildRoutes(self):
+        static = [
+            (r'/(.*)', tornado.web.StaticFileHandler, {'path': "src/hkpserver/wwwroot"})
+        ]
         for c in self.controllers:
             #self.routes.append((r"/%s/(.*)" % c.lower(), eval("%sController" % c)))
             #self.routes.append((r"/%s(.*)" % c.lower(), eval("%sController" % c)))
             self.routes.append(eval("%sController" % c).routes(self.routePrefix, config=self.config))
+        for s in static:
+            print s
+            self.routes.append(s)
 
     def start(self, port = 11371, as_thread = False):
         self._buildRoutes()
         application = tornado.web.Application(self.routes)
         application.listen(port)
-
+        self.logger.info("Server will liston on Port: %i" % port)
         if as_thread:
             threading.Thread(target=self._start).start()
             return True

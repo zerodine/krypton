@@ -1,0 +1,49 @@
+{% extends "themes/default.theme.html" %}
+{% block title %}Krypton PGP/GPG Public Keyserver{% end %}
+
+{% block body %}
+<h1>Krypton PGP/GPG Public Keyserver</h1>
+
+<h3>
+<hr>
+<a name="extract">Extract a key</a></h3>
+
+<form action="/pks/lookup" method="GET">
+
+Search String: <input name="search" size=40>
+<input type="submit" value="Do the search!"><p>
+
+Index: <input type="radio" name="op" value="index" checked>
+Verbose Index: <input type="radio" name="op" value="vindex"><p>
+
+<input type="checkbox" name="fingerprint"> Show PGP fingerprints
+for keys <p>
+
+<input type="checkbox" name="exact"> Only return exact matches <p>
+
+</form>
+
+<h3>
+<hr>
+<a name="submit">Submit a key</a></h3>
+<form action="/pks/add" method="POST">
+
+Enter ASCII-armored PGP key here: <p>
+<textarea name="keytext" rows=20 cols=66></textarea><p>
+
+<input type="reset" value="Clear">
+<input type="submit" value="Submit this key to the keyserver!"><p>
+
+</form>
+
+<h3>
+<hr>
+<a name="remove">Remove a key</a></h3>
+
+<form action="faq.html">
+
+Search String: <input name="search" size=40>
+<input type="submit" value="Remove the key!"><p>
+
+</form>
+{% end %}

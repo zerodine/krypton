@@ -80,8 +80,11 @@ __author__ = 'thospy'
    end of each line may be left off, if desired.
 '''
 
+import logging
+
 class MrParser(object):
     version = 1
+    logger = logging.getLogger("krypton")
 
     _raw = []
     def __init__(self, jsonData):
@@ -93,6 +96,7 @@ class MrParser(object):
         for key in self._raw:
             data.append(self._listKey(key))
             data.append(self._listUid(key))
+            data.append(self._listUat(key))
         return "\n".join(data)
 
     def _start(self):

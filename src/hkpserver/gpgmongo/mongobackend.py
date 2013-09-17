@@ -1,7 +1,7 @@
 __author__ = 'thospy'
 
 import pymongo
-import datetime
+import logging
 
 
 class MongoBackend(object):
@@ -11,6 +11,7 @@ class MongoBackend(object):
 
     connected = False
     connectionUrl = ""
+    logger = logging.getLogger("krypton.mongo")
 
     def __init__(self, connectionUrl):
         self.connectionUrl = connectionUrl
@@ -28,23 +29,30 @@ class MongoBackend(object):
         return x
 
     def exists(self, collection, id):
+        self.logger.debug("Checking for existence of id %s in collection %s" % (id, collection))
         return self._collection(collection).find_one({"_id": id}, fields=[])
 
     def create(self, collection, data, id = None):
+        self.logger.debug("Create Record in collection %s" % collection)
+
         if id is not None:
             data["_id"] = id
         return self._collection(collection).insert(data)
 
     def update(self, collection, data, id):
+        self.logger.debug("Updating Record with id %s in collection %s" % (id, collection))
         return self._collection(collection).update({"_id": id}, data)
 
     def read(self, collection, id, fields=None):
-        return self._collection(collection).find_one({"_id": id}, fields=fields)
+        self.logger.debug("Read record with id %s in collection %s" % (id, collection))
+        return self._collection(collection).find_one({"_id": {"$regex": id}}, fields=fields)
 
     def delete(self, collection, id):
         pass
 
     def runQuery(self, collection, query):
+        self.logger.debug("Run Query: %s in collection %s" % (str(query), collection))
+
         data = []
         for x in self._collection(collection).find(query):
             data.append(x)

@@ -5,12 +5,14 @@ import pgpdump
 import base64
 import hashlib
 import math
+import logging
 
 
 class JsonParser(object):
     _raw = None
     _organized = {}
     _primaries = []
+    logger = logging.getLogger("krypton")
 
     def __init__(self, asciiData):
         self.reset()
@@ -32,7 +34,9 @@ class JsonParser(object):
             className = p["packet"].__class__.__name__
             method = getattr(self, 'parse' + className, None)
             if not method:
-                print "method %s does not exist" % className
+                self.logger.critical("Cannot parse Packet with name %s because parser with the name %s"
+                                     "Does not exists! That's not good!" % (className, 'parse' + className))
+                continue
             else:
                 if not className in data:
                     data[className] = []
@@ -105,7 +109,6 @@ class JsonParser(object):
             "primary":      primary,
             "signatures":   self.parseSignaturePacket(packet["signatures"])
         }
-        #print packet["packet"].user
         return self._serialize(data)
 
     def parseUserAttributePacket(self, packet):
@@ -159,7 +162,7 @@ class JsonParser(object):
             if isinstance(packet, pgpdump.packet.PublicSubkeyPacket):
                 if x is not None:
                     self._organized["packages"].append(x)
-                x = {"packet":packet, "signatures":[]}
+                x = {"packet": packet, "signatures": []}
 
             elif isinstance(packet, pgpdump.packet.PublicKeyPacket):
                 self._organized['publickey'] = packet
@@ -167,34 +170,21 @@ class JsonParser(object):
             elif isinstance(packet, pgpdump.packet.UserIDPacket):
                 if x is not None:
                     self._organized["packages"].append(x)
-                x = {"packet":packet, "signatures":[]}
+                x = {"packet": packet, "signatures": []}
                 self._primaries["UserIDPacket"] = packet.user
-                #pprint(vars(packet))
-
             elif isinstance(packet, pgpdump.packet.SignaturePacket):
                 if x is not None:
                     x["signatures"].append(packet)
-
-                #pprint(vars(packet))
-                #for sp in packet.subpackets:
-                    #pprint(vars(sp))
-                    #pass
-
             elif isinstance(packet, pgpdump.packet.UserAttributePacket):
                 if x is not None:
                     self._organized["packages"].append(x)
-                x = {"packet":packet, "signatures":[]}
+                x = {"packet": packet, "signatures": []}
 
                 h = hashlib.new('sha1')
                 h.update(packet.image_data)
                 self._primaries["UserAttributePacket"] = h.hexdigest()
-
-
             else:
-                print "NOT KNOWN: %s" % packet
+                self.logger.warning("Found an unknown packet while parsing key (%s)." % packet)
 
-            #print packet.fingerprint
         if x is not None:
             self._organized["packages"].append(x)
-
-        print self._primaries

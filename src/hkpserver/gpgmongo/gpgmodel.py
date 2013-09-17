@@ -29,28 +29,37 @@ class GpgModel(MongoBackend):
 
     def retrieveKey(self, keyId):
         x = self.read(id=keyId, collection=self.collection, fields=['keytext'])
-        if "keytext" in x:
+        print x
+        if x and "keytext" in x:
             return x["keytext"]
         return None
 
-    def search(self, searchString):
+    def search(self, searchString, exact = False):
         hex = "0x"
         if str(searchString).lower().startswith(hex):
-            return self.searchKeyId(searchString[len(hex):])
-        return self.searchKey(searchString)
+            return self.searchKeyId(searchString[len(hex):], exact)
+        return self.searchKey(searchString, exact)
 
-    def searchKeyId(self, keyId):
-        print "Search for keyid: %s" % keyId
+    def searchKeyId(self, keyId, exact=False):
+        if exact:
+            search = keyId
+        else:
+            search = {'$regex': keyId}
         query = {
             "$or": [
-                {'fingerprint': {'$regex': keyId} },
-                {'PublicSubkeyPacket.fingerprint': {'$regex': keyId}}
+                {'fingerprint': search},
+                {'key_id': search},
+                {'PublicSubkeyPacket.fingerprint': search},
+                {'PublicSubkeyPacket.key_id': search}
             ]
         }
         return self.runQuery(collection="%sDetails" % self.collection, query=query)
 
-    def searchKey(self, searchString):
-        print "Search for String: %s" % searchString
+    def searchKey(self, searchString, exact=False):
+        # in keyword search we simply ignore the exact parameter
+        if exact:
+            pass
+
         query = {
             "$or": [
                 {'UserIDPacket.user': {'$regex': searchString}}

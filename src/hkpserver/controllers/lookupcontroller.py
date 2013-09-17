@@ -2,6 +2,7 @@ __author__ = 'thospy'
 
 from basecontroller import BaseController
 from src.hkpserver.gpgjsonparser import MrParser
+import tornado.template
 
 class LookupController(BaseController):
 
@@ -58,30 +59,31 @@ class LookupController(BaseController):
         if "nm" in self.options:
             self.noModification = True
 
-    def op_index(self):
+    def op_index(self, verbose = False):
         data = self._getData()
         if self.machineReadable:
             self.set_header("Content-Type", "text/plain")
             mr = MrParser(data)
             self.write(mr.parse())
             return
-        self.write("Index")
+
+        loader = tornado.template.Loader("src/hkpserver/views")
+        self.write(loader.load("gpgindex.template.html").generate( ))
 
     def op_vindex(self):
         if self.machineReadable:
             self.op_index()
             return
-        
-        data = self._getData()
-        print data
-        self.write("Verbose Index")
+
+        self.op_index(verbose=True)
+        return
 
     def _getData(self):
         self.gpgModel.connect(db=self.config.mongoDatabase)
 
         if self.searchHex:
-            return self.gpgModel.searchKeyId(keyId=self.searchString)
-        return self.gpgModel.searchKey(searchString=self.searchString)
+            return self.gpgModel.searchKeyId(keyId=self.searchString, exact=self.exact)
+        return self.gpgModel.searchKey(searchString=self.searchString, exact=self.exact)
 
     def op_get(self):
         self.gpgModel.connect(db=self.config.mongoDatabase)
@@ -92,8 +94,13 @@ class LookupController(BaseController):
             self.set_header("Content-Type", "application/pgp-keys")
             self.write(key)
             return
+        loader = tornado.template.Loader("src/hkpserver/views")
+        self.write(loader.load("gpgkey.template.html").generate(
+            fingerprint=self.searchString.upper(),
+            key=key
+        ))
 
-        self.write('''<html>
+        """self.write('''<html>
             <head>
                 <title>Public Key Server -- Get ``0x%(fingerprint)s, ''</title>
             </head>
@@ -101,4 +108,4 @@ class LookupController(BaseController):
                 <h1>Public Key Server -- Get ``0x%(fingerprint)s, ''</h1>
                 <pre>%(key)s</pre>
             </body>
-        </html>''' % {"fingerprint": self.searchString.upper(), "key":key})
+        </html>''' % {"fingerprint": self.searchString.upper(), "key":key})"""

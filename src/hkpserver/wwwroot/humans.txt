@@ -1,0 +1,17 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+    Philipp Spinner -- Developer -- @philippspinnler
+    Thomas Spycher -- Developer -- @tspycher
+
+
+# THANKS
+
+    Our Mom's and Dad's
+
+# TECHNOLOGY COLOPHON
+
+    HTML5, CSS3
+    jQuery, Modernizr
