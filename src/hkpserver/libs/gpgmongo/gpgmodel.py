@@ -1,4 +1,5 @@
 import hashlib
+from time import gmtime, strftime
 
 __author__ = 'thospy'
 
@@ -15,8 +16,48 @@ class GpgModel(MongoBackend):
     queue = None
     gossipServers = None
 
+    def numberOfKeys(self):
+        """
+
+
+        :return:
+        """
+        return self._collection(self.collection).count()
+
     def listAllKeys(self):
-        return self.runQuery(collection=self.collection,query=None,fields=["_id", "hash", "hash_algo"])
+        """
+
+
+        :return:
+        """
+        return self.runQuery(collection=self.collection, query=None, fields=["_id", "hash", "hash_algo"])
+
+    def updateStatistics(self, update=False):
+        """
+
+        :param update:
+        """
+        if update:
+            toUpdate = {"NewKeys": 0, "UpdatedKeys": 1}
+        else:
+            toUpdate = {"NewKeys": 1, "UpdatedKeys": 0}
+
+        currentDate = strftime("%Y-%m-%d", gmtime())
+        currentHour = strftime("%H", gmtime())
+        h = hashlib.new('md5')
+        h.update("Stats%s%s" % (currentDate, currentHour))
+        id = h.hexdigest()
+
+        data = {
+            "$set": {
+                "date": currentDate,
+                "hour": currentHour
+            },
+            "$inc": toUpdate
+
+        }
+
+        self._collection("%sStatistics" % self.collection).update({"_id": id}, data, upsert=True)
 
     def uploadKey(self, asciiArmoredKey):
         """
@@ -28,15 +69,18 @@ class GpgModel(MongoBackend):
         jsonAsciiArmoredKey = j.dump(raw=True)
         keyId = str(jsonAsciiArmoredKey["fingerprint"]).upper()
 
-        h = hashlib.new('sha1')
+        hash_algo = "md5"
+        h = hashlib.new(hash_algo)
         h.update(asciiArmoredKey)
         hexValue = h.hexdigest()
         data = {
             "keytext": asciiArmoredKey,
-            #"inSync": False,
             "hash": hexValue,
-            "hash_algo": "sha1",
+            "hash_algo": hash_algo,
         }
+        jsonAsciiArmoredKey['hash'] = hexValue
+        jsonAsciiArmoredKey['hash_algo'] = hash_algo
+
 
         # Upload the asciiArmored Key, but first check if key has been changed
         existing = self.exists(id=keyId, collection=self.collection, fields=["hash", "hash_algo"])
@@ -46,8 +90,10 @@ class GpgModel(MongoBackend):
 
         if existing:
             self.update(data=data, collection=self.collection, id=keyId)
+            self.updateStatistics(update=True)
         else:
             self.create(data=data, collection=self.collection, id=keyId)
+            self.updateStatistics(update=False)
 
         # Upload the json formatted Key
         if self.exists(id=keyId, collection="%sDetails" % self.collection):
