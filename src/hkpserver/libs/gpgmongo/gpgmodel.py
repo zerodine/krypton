@@ -1,7 +1,8 @@
 import hashlib
 from time import gmtime, strftime
-
-__author__ = 'thospy'
+from tornado import httpclient
+from tornado.httputil import HTTPHeaders
+import re
 
 from src.hkpserver.libs.gpgmongo.mongobackend import MongoBackend
 from src.hkpserver.libs.gpgjsonparser import JsonParser
@@ -83,7 +84,7 @@ class GpgModel(MongoBackend):
 
         self._collection("%sStatistics" % self.collection).update({"_id": id}, data, upsert=True)
 
-    def uploadKey(self, asciiArmoredKey):
+    def uploadKey(self, asciiArmoredKey, force=True, externalUpload=False):
         """
 
         :param asciiArmoredKey:
@@ -105,10 +106,14 @@ class GpgModel(MongoBackend):
         jsonAsciiArmoredKey['hash'] = hexValue
         jsonAsciiArmoredKey['hash_algo'] = hash_algo
 
+        # getting missing keys
+        if not externalUpload:
+            for fk in jsonAsciiArmoredKey["foreignKeys"]:
+                self.tryImportRemoteKey(fk)
 
         # Upload the asciiArmored Key, but first check if key has been changed
         existing = self.exists(id=keyId, collection=self.collection, fields=["hash", "hash_algo"])
-        if existing and hexValue == existing["hash"]:
+        if existing and hexValue == existing["hash"] and not force:
             self.logger.info("Key %s is unchanged, no db operations are performed" % keyId)
             return True
 
@@ -188,7 +193,29 @@ class GpgModel(MongoBackend):
                 {'PublicSubkeyPacket.key_id': search}
             ]
         }
-        return self.runQuery(collection="%sDetails" % self.collection, query=query)
+        data = self.runQuery(collection="%sDetails" % self.collection, query=query)
+        if not data:
+            self.tryImportRemoteKey()
+            data = self.runQuery(collection="%sDetails" % self.collection, query=query)
+        return data
+
+    def tryImportRemoteKey(self, keyId):
+        self.logger.info("Trying to get key %s" % keyId)
+        url = "http://pool.sks-keyservers.net:11371/pks/lookup?op=get&search=0x%s&options=mr" % keyId
+        http_client = httpclient.HTTPClient()
+        http_request = httpclient.HTTPRequest(url=url)
+        http_request.headers = (HTTPHeaders({"content-type": "application/pgp-keys"}))
+        response = None
+        try:
+            response = http_client.fetch(http_request)
+        except httpclient.HTTPError, e:
+            print e
+            return False
+
+        key = re.search("-----BEGIN PGP PUBLIC KEY BLOCK.*END PGP PUBLIC KEY BLOCK-----", response.body, re.I | re.S | re.M).group(0)
+        if key:
+            return self.uploadKey(asciiArmoredKey=key, force=True, externalUpload=True)
+        return False
 
     def searchKey(self, searchString, exact=False):
         """

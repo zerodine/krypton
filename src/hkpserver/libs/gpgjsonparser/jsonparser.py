@@ -1,7 +1,10 @@
+import datetime
+
 __author__ = 'thospy'
 
 import json
 import pgpdump
+from pgpdump.utils import (PgpdumpException, get_int2, get_int4, get_mpi, get_key_id, get_int_bytes)
 import base64
 import hashlib
 import math
@@ -15,10 +18,10 @@ class JsonParser(object):
         00: "Signature of a binary document",
         01: "Signature of a canonical text document",
         02: "Standalone signature",
-        16: "Generic certification of a User ID and Public Key packet",
-        17: "Persona certification of a User ID and Public Key packet",
-        18: "Casual certification of a User ID and Public Key packet",
-        19: "Positive certification of a User ID and Public Key packet",
+        16: "Generic certification of a User ID and Public Key packet",     SIG
+        17: "Persona certification of a User ID and Public Key packet",     SIG1
+        18: "Casual certification of a User ID and Public Key packet",      SIG2
+        19: "Positive certification of a User ID and Public Key packet",    SIG3
         24: "Subkey Binding Signature",
         25: "Primary Key Binding Signature",
         31: "Signature directly on a key",
@@ -34,6 +37,8 @@ class JsonParser(object):
     _organized = {}
     _primaries = []
     logger = logging.getLogger("krypton")
+    keyId = None
+    otherKeys = []
 
     def __init__(self, asciiData):
         """
@@ -75,8 +80,8 @@ class JsonParser(object):
             else:
                 if not className in data:
                     data[className] = []
-
                 data[className].append(method(p))
+        data["foreignKeys"] = list(set(self.otherKeys))
 
         self._primaries = []
 
@@ -93,6 +98,9 @@ class JsonParser(object):
         :param sub:
         :return:
         """
+        if not sub:
+            self.keyId = packet.key_id
+
         data = {
             "key_id": packet.key_id,
             "key_id_32": packet.fingerprint[-8:],
@@ -134,16 +142,34 @@ class JsonParser(object):
         """
         if not signatures:
             signatures = []
+
         data = []
         for s in signatures:
+            # Check for revocation
             isRevocation = False
             if int(s.raw_sig_type) in [32, 40, 48]:
                 isRevocation = True
+
+            # get siglevel
+            index_sig_text = None
+            if 16 <= s.raw_sig_type <= 19:
+                type = str(s.raw_sig_type - 16)
+                if type == "0":
+                    type = ""
+                index_sig_text = "sig%s" % type
+
+            # get signer name
+            if s.key_id in self.keyId:
+                signer_name = "[selfsig]"
+            else :
+                self.otherKeys.append(s.key_id)
+                signer_name = "Mr. %s" % s.key_id
 
             data.append(self._serialize({
                 "sig_version": s.sig_version,
                 "sig_type": s.sig_type,
                 "sig_type_raw": s.raw_sig_type,
+                "index_sig_text": index_sig_text,
                 "pub_algorithm": s.pub_algorithm,
                 "hash_algorithm": s.hash_algorithm,
                 "raw_creation_time": s.raw_creation_time,
@@ -151,9 +177,31 @@ class JsonParser(object):
                 "raw_expiration_time": s.raw_expiration_time,
                 "expiration_time": s.expiration_time,
                 "key_id": s.key_id,
+                "key_id_32": s.key_id[-8:],
+                "key_id_64": s.key_id[-16:],
                 "hash2": s.hash2,
-                "isRevocation": isRevocation
+                "isRevocation": isRevocation,
+                "signer_name": signer_name#,
+                #"signatureSubPackages": self.parseSignatureSubPacket(s.subpackets)
             }))
+        return data
+
+    def parseSignatureSubPacket(self, signatureSub):
+        if not signatureSub:
+            signatureSub = []
+
+        data = []
+
+        for s in signatureSub:
+            x = vars(s)
+            if s.subtype in [2, 9]:
+                x["data_human"] = get_int4(s.data, 0)
+            elif s.subtype == 3:
+                x["data_human"] = get_int4(s.data, 0)
+            elif s.subtype == 16:
+                x["data_human"] = get_key_id(s.data, 0)
+            x["name"] = s.name
+            data.append(self._serialize(x))
         return data
 
     def parseUserIDPacket(self, packet):
@@ -223,7 +271,6 @@ class JsonParser(object):
                 data[k] = base64.b64encode(v)
             elif t == "datetime":
                 data[k] = str(v)
-
         return data
 
     def _organizeData(self):

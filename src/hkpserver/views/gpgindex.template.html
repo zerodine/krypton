@@ -14,7 +14,7 @@
     <li class="list-group-item">
         <div class="row">
             <div class="col-md-1"><span class="glyphicon glyphicon-lock"></span>pub</div>
-            <div class="col-md-2">{{ gpgkey["key_lenght"] }}R/<a href="/pks/lookup?op=get&search=0x{{ gpgkey["key_id"] }}">{{ gpgkey["key_id"] }}</a></div>
+            <div class="col-md-2">{{ gpgkey["key_lenght"] }}R/<a href="/pks/lookup?op=get&search=0x{{ gpgkey["key_id"] }}">{{ gpgkey["key_id_32"] }}</a></div>
             <div class="col-md-2">{{ gpgkey["creation_time"] }}</div>
             <div class="col-md-4"><a href="/pks/lookup?op=vindex&search=0x{{ gpgkey["key_id"] }}">{{ gpgkey["primary_UserIDPacket"] }}</a></div>
         </div>
@@ -23,7 +23,6 @@
                 <div class="col-md-2">&nbsp;</div>
                 <div class="col-md-4">{{ userid['user'] }}</div>
             </div>
-            <div class="row"><div class="col-md-12">&nbsp;</div></row>
         {% end %}
 
         {% for userattribute in gpgkey['UserAttributePacket'] %}
@@ -31,7 +30,6 @@
                 <div class="col-md-2">&nbsp;</div>
                 <div class="col-md-4">[user attribute packet]</div>
             </div>
-            <div class="row"><div class="col-md-12">&nbsp;</div></row>
         {% end %}
 
         {% if showFingerprint %}
@@ -39,12 +37,11 @@
                 <div class="col-md-2">&nbsp;</div>
                 <div class="col-md-4">Fingerprint={{ gpgkey['fingerprint'] }}</div>
             </div>
-            <div class="row"><div class="col-md-12">&nbsp;</div></row>
         {% end %}
         {% if showHash %}
             <div class="row">
                 <div class="col-md-2">&nbsp;</div>
-                <div class="col-md-4">Hash={{ gpgkey['fingerprint'] }}</div>
+                <div class="col-md-4">Hash={{ gpgkey['hash'] }}</div>
             </div>
         {% end %}
     </li>
