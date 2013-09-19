@@ -1,5 +1,9 @@
+
 __author__ = 'thospy'
 import unittest
+import time
+import random
+import json
 from src.hkpserver.libs.gpgmongo import GpgModel
 from abstracttestcase import AbstractTestCase
 
@@ -62,12 +66,28 @@ class GpgModelTest(AbstractTestCase):
         self.assertEqual(resulthexsearch[0]["fingerprint"], "27C5017E0755AD31BF40832BCF96B54D3E08F9F5")
         self.assertEqual(resulttextsearch[0]["fingerprint"], "27C5017E0755AD31BF40832BCF96B54D3E08F9F5")
 
+    @unittest.skip("limit runtime")
     def test_listKeys(self):
         key = self._readKey("demodata/key01.gpg")
         self.gpgModel.uploadKey(key)
 
         allKeys = self.gpgModel.listAllKeys()
         print allKeys
+
+    def test_stats(self):
+        # Create Testdata
+        for i in range(40):
+            update=False
+            if random.randint(0, 1):
+                update=True
+            date = int(time.time()) - random.randint(0, (3*24*60*60)) # Time between now and one 3 days
+            self.gpgModel.updateStatistics(update=update, overwriteDate=date)
+
+        statsDay = self.gpgModel.getStatistics()
+        statsHour = self.gpgModel.getStatistics(onlyDay=False)
+
+        print json.dumps(statsDay, indent=2)
+        print json.dumps(statsHour, indent=2)
 
     @staticmethod
     def getSuite():

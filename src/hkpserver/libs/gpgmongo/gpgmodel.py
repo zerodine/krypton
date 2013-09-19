@@ -16,6 +16,24 @@ class GpgModel(MongoBackend):
     queue = None
     gossipServers = None
 
+    def getStatistics(self, onlyDay=True):
+        keys = ["date"]
+        if not onlyDay:
+            keys.append("hour")
+
+        rows = keys + ["NewKeys", "UpdatedKeys"]
+        return self._collection("%sStatistics" % self.collection).group(
+            key=keys,
+            condition=rows,
+            initial={"totalNewKeys": 0, "totalUpdatedKeys": 0},
+            reduce="""
+            function ( curr, result ) {
+                result.totalNewKeys += curr.NewKeys;
+                result.totalUpdatedKeys += curr.UpdatedKeys;
+            }"""
+        )
+
+
     def numberOfKeys(self):
         """
 
@@ -32,18 +50,25 @@ class GpgModel(MongoBackend):
         """
         return self.runQuery(collection=self.collection, query=None, fields=["_id", "hash", "hash_algo"])
 
-    def updateStatistics(self, update=False):
+    def updateStatistics(self, update=False, overwriteDate=None):
         """
 
+
+        :param overwriteDate: this is mainly for unittests
         :param update:
         """
+        if overwriteDate:
+            now = gmtime(overwriteDate)
+        else:
+            now = gmtime()
+
         if update:
             toUpdate = {"NewKeys": 0, "UpdatedKeys": 1}
         else:
             toUpdate = {"NewKeys": 1, "UpdatedKeys": 0}
 
-        currentDate = strftime("%Y-%m-%d", gmtime())
-        currentHour = strftime("%H", gmtime())
+        currentDate = strftime("%Y-%m-%d", now)
+        currentHour = strftime("%H", now)
         h = hashlib.new('md5')
         h.update("Stats%s%s" % (currentDate, currentHour))
         id = h.hexdigest()
@@ -54,7 +79,6 @@ class GpgModel(MongoBackend):
                 "hour": currentHour
             },
             "$inc": toUpdate
-
         }
 
         self._collection("%sStatistics" % self.collection).update({"_id": id}, data, upsert=True)
@@ -193,5 +217,6 @@ class GpgModel(MongoBackend):
         if self.collection.lower().startswith("test"):
             self.removeCollection(self.collection)
             self.removeCollection("%sDetails" % self.collection)
+            self.removeCollection("%sStatistics" % self.collection)
             return True
         return False
