@@ -31,6 +31,11 @@ class Gossiping(object):
         while True:
             work = self.applicationContext.queue.get()
             self.logger.info("Received work from queue \"%s\"" % work.name)
-            work.doWork()
-            self.applicationContext.queue.task_done()
+            if work.doWork():
+                self.applicationContext.queue.task_done()
+            else:
+                if work.givingUp:
+                    self.logger.warn("Giving up Processing this Gossiping task")
+                else:
+                    self.applicationContext.queue.put(work)
             time.sleep(2)

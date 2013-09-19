@@ -48,6 +48,7 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li class="active"><a href="">{{ current }}</a></li>
+            <li><a href="/pks/lookup?op=stats">Stats</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
           </ul>
@@ -57,7 +58,7 @@
     <div class="container">
         {% block body %}
         {% end %}
-    </div>
+
       <hr>
 
       <footer>
@@ -88,5 +89,6 @@ This page is a modified version of the examples provided by
             g.src='//www.google-analytics.com/ga.js';
             s.parentNode.insertBefore(g,s)}(document,'script'));
         </script>
+        </div>
     </body>
 </html>

@@ -23,6 +23,7 @@
                 <div class="col-md-2">&nbsp;</div>
                 <div class="col-md-4">{{ userid['user'] }}</div>
             </div>
+            <div class="row"><div class="col-md-12">&nbsp;</div></row>
         {% end %}
 
         {% for userattribute in gpgkey['UserAttributePacket'] %}
@@ -30,12 +31,20 @@
                 <div class="col-md-2">&nbsp;</div>
                 <div class="col-md-4">[user attribute packet]</div>
             </div>
+            <div class="row"><div class="col-md-12">&nbsp;</div></row>
         {% end %}
 
         {% if showFingerprint %}
             <div class="row">
                 <div class="col-md-2">&nbsp;</div>
                 <div class="col-md-4">Fingerprint={{ gpgkey['fingerprint'] }}</div>
+            </div>
+            <div class="row"><div class="col-md-12">&nbsp;</div></row>
+        {% end %}
+        {% if showHash %}
+            <div class="row">
+                <div class="col-md-2">&nbsp;</div>
+                <div class="col-md-4">Hash={{ gpgkey['fingerprint'] }}</div>
             </div>
         {% end %}
     </li>

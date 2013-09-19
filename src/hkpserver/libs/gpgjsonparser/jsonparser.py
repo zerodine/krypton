@@ -11,6 +11,23 @@ import logging
 class JsonParser(object):
     """
 
+    sig_types = {
+        00: "Signature of a binary document",
+        01: "Signature of a canonical text document",
+        02: "Standalone signature",
+        16: "Generic certification of a User ID and Public Key packet",
+        17: "Persona certification of a User ID and Public Key packet",
+        18: "Casual certification of a User ID and Public Key packet",
+        19: "Positive certification of a User ID and Public Key packet",
+        24: "Subkey Binding Signature",
+        25: "Primary Key Binding Signature",
+        31: "Signature directly on a key",
+        32: "Key revocation signature",
+        40: "Subkey revocation signature",
+        48: "Certification revocation signature",
+        64: "Timestamp signature",
+        80: "Third-Party Confirmation signature",
+    }
     """
 
     _raw = None
@@ -119,6 +136,10 @@ class JsonParser(object):
             signatures = []
         data = []
         for s in signatures:
+            isRevocation = False
+            if int(s.raw_sig_type) in [32, 40, 48]:
+                isRevocation = True
+
             data.append(self._serialize({
                 "sig_version": s.sig_version,
                 "sig_type": s.sig_type,
@@ -130,7 +151,8 @@ class JsonParser(object):
                 "raw_expiration_time": s.raw_expiration_time,
                 "expiration_time": s.expiration_time,
                 "key_id": s.key_id,
-                "hash2": s.hash2
+                "hash2": s.hash2,
+                "isRevocation": isRevocation
             }))
         return data
 

@@ -98,7 +98,7 @@ class MongoBackend(object):
         """
         pass
 
-    def runQuery(self, collection, query):
+    def runQuery(self, collection, query=None, fields=None):
         """
 
         :param collection:
@@ -106,9 +106,8 @@ class MongoBackend(object):
         :return:
         """
         self.logger.debug("Run Query: %s in collection %s" % (str(query), collection))
-
         data = []
-        for x in self._collection(collection).find(query):
+        for x in self._collection(collection).find(spec=query, fields=fields):
             data.append(x)
         return data
 

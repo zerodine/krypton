@@ -19,7 +19,8 @@ class IndexController(BaseController):
         :param config:
         :return:
         """
-        return r'/(.*).html', IndexController, dict(applicationContext=applicationContext)
+        #return r'/(.*).html', IndexController, dict(applicationContext=applicationContext)
+        return r'(/$|/(.*).html)', IndexController, dict(applicationContext=applicationContext)
 
     def get(self, *args, **kwargs):
         """

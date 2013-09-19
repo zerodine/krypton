@@ -15,6 +15,7 @@ class LookupController(BaseController):
     machineReadable = False
     noModification = False
     fingerprint = False
+    hash = False
     exact = False
 
     searchHex = False
@@ -43,7 +44,9 @@ class LookupController(BaseController):
         # Parsing Fingerprint and Exact
         self._parseOtherOptions(
             fingerprint=self.get_argument("fingerprint", default="off", strip=False),
-            exact=self.get_argument("exact", default="off", strip=False))
+            exact=self.get_argument("exact", default="off", strip=False),
+            hash=self.get_argument("hash", default="off", strip=False))
+
 
         # Parsing Search
         self._parseSearch(self.get_argument("search", default="", strip=False))
@@ -65,7 +68,7 @@ class LookupController(BaseController):
 
         self.searchString = s
 
-    def _parseOtherOptions(self, fingerprint, exact):
+    def _parseOtherOptions(self, fingerprint, exact, hash):
         """
 
         :param fingerprint:
@@ -76,6 +79,8 @@ class LookupController(BaseController):
             self.fingerprint = True
         if on in str(exact).lower():
             self.exact = True
+        if on in str(hash).lower():
+            self.hash = True
 
     def _parseOptions(self):
         """
@@ -109,6 +114,7 @@ class LookupController(BaseController):
             current="Lookup",
             gpgkeys=data,
             showFingerprint=self.fingerprint,
+            showHash=self.hash,
             searchString=self.searchString))
 
     def op_vindex(self):
@@ -156,4 +162,35 @@ class LookupController(BaseController):
             current="Get",
             fingerprint=self.searchString.upper(),
             key=key
+        ))
+
+    def op_hget(self):
+        """
+
+
+        :return:
+        """
+
+        self.gpgModel.connect(db=self.config.mongoDatabase)
+        key = self.gpgModel.retrieveKey(hash=self.searchString)
+
+        if self.machineReadable:
+            self.set_header("Content-Type", "application/pgp-keys")
+            self.write(key)
+            return
+        loader = tornado.template.Loader("src/hkpserver/views")
+        self.write(loader.load("gpgkey.template.html").generate(
+            current="Get Hash",
+            fingerprint=self.searchString.upper(),
+            key=key
+        ))
+
+    def op_stats(self):
+        self.gpgModel.connect(db=self.config.mongoDatabase)
+
+        if self.machineReadable:
+            pass
+        loader = tornado.template.Loader("src/hkpserver/views")
+        self.write(loader.load("stats.template.html").generate(
+            current="Statistics"
         ))

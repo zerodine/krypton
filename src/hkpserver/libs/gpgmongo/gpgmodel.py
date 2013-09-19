@@ -15,6 +15,9 @@ class GpgModel(MongoBackend):
     queue = None
     gossipServers = None
 
+    def listAllKeys(self):
+        return self.runQuery(collection=self.collection,query=None,fields=["_id", "hash", "hash_algo"])
+
     def uploadKey(self, asciiArmoredKey):
         """
 
@@ -58,8 +61,7 @@ class GpgModel(MongoBackend):
             self.logger.info("Created Synchronisation Task for Key %s to Server %s:%s" % (keyId, server["host"], server["port"]))
             self.queue.put(GossipTask(
                 keyId=keyId,
-                toServer=server["host"],
-                toServerPort=server["port"],
+                gossipServers=self.gossipServers,
                 asciiArmoredKey=asciiArmoredKey
                 )
             )
@@ -67,13 +69,20 @@ class GpgModel(MongoBackend):
             self.logger.info("I do not syncronize the key %s due to no sks servers are configured" % keyId)
         return True
 
-    def retrieveKey(self, keyId):
+    def retrieveKey(self, keyId=None, hash=None):
         """
 
         :param keyId:
         :return:
         """
-        x = self.read(id=keyId, collection=self.collection, fields=['keytext'])
+        x = None
+        if keyId:
+            x = self.read(id=keyId, collection=self.collection, fields=['keytext'])
+        elif hash:
+            y = self.runQuery(collection=self.collection, query={'hash': hash}, fields=['keytext'])
+            if y and len(y):
+                x = y[0]
+
         if x and "keytext" in x:
             return x["keytext"]
         return None

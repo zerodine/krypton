@@ -39,3 +39,5 @@ manage.py
 server.conf
 server.test.conf
 server2.conf
+server3.conf
+atlassian-ide-plugin.xml
