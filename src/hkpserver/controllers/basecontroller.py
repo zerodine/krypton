@@ -16,6 +16,7 @@ class BaseController(tornado.web.RequestHandler):
     gpgModel = None
     logger = logging.getLogger("krypton")
 
+
     def initialize(self, applicationContext=None):
         """
 
@@ -28,6 +29,22 @@ class BaseController(tornado.web.RequestHandler):
         self.gpgModel.queue = self.applicationContext.queue
         self.gpgModel.gossipServers = self.applicationContext.gossipServers
         self.gpgModel.collection = self.config.mongoCollection
+
+
+    def _parseSearch(self, searchString):
+        """
+
+        :param searchString:
+        """
+        hexIndicator = "0x"
+        s = str(searchString)
+        searchHex = False
+        if s.lower().startswith(hexIndicator):
+            searchHex = True
+            s = s[len(hexIndicator):]
+
+        searchString = s
+        return {"searchHex": searchHex, "searchString": searchString}
 
     def jsonRender(self, data):
         base = {

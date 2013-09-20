@@ -47,26 +47,14 @@ class LookupController(BaseController):
             exact=self.get_argument("exact", default="off", strip=False),
             hash=self.get_argument("hash", default="off", strip=False))
 
-
         # Parsing Search
-        self._parseSearch(self.get_argument("search", default="", strip=False))
+        searchData = self._parseSearch(self.get_argument("search", default="", strip=False))
+        self.searchHex = searchData["searchHex"]
+        self.searchString = searchData["searchString"]
 
         # Parsing Operation and run it
         op = self.get_argument("op", default="index", strip=False)
         getattr(self, "op_%s" % str(op).lower())(**kwargs)
-
-    def _parseSearch(self, searchString):
-        """
-
-        :param searchString:
-        """
-        hexIndicator = "0x"
-        s = str(searchString)
-        if s.lower().startswith(hexIndicator):
-            self.searchHex = True
-            s = s[len(hexIndicator):]
-
-        self.searchString = s
 
     def _parseOtherOptions(self, fingerprint, exact, hash):
         """

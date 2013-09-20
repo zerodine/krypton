@@ -165,7 +165,9 @@ class GpgModel(MongoBackend):
         :return:
         """
         x = None
+
         if keyId:
+            keyId = keyId.upper()
             x = self.read(id=keyId, collection=self.collection, fields=['keytext'])
         elif hash:
             y = self.runQuery(collection=self.collection, query={'hash': hash}, fields=['keytext'])
@@ -195,6 +197,8 @@ class GpgModel(MongoBackend):
         :param exact:
         :return:
         """
+        keyId = keyId.upper()
+
         if exact:
             search = keyId
         else:
@@ -207,6 +211,7 @@ class GpgModel(MongoBackend):
                 {'PublicSubkeyPacket.key_id': search}
             ]
         }
+        print query
         data = self.runQuery(collection="%sDetails" % self.collection, query=query)
         if not data:
             self.tryImportRemoteKey()

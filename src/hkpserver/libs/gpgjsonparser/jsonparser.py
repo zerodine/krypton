@@ -102,12 +102,12 @@ class JsonParser(object):
             self.keyId = packet.key_id
 
         data = {
-            "key_id": packet.key_id,
-            "key_id_32": packet.fingerprint[-8:],
-            "key_id_64": packet.fingerprint[-16:],
-            "fingerprint_v3": packet.fingerprint[-32:],
-            "fingerprint_v4": packet.fingerprint[-40:],
-            "fingerprint": packet.fingerprint,
+            "key_id": str(packet.key_id).upper(),
+            "key_id_32": str(packet.fingerprint[-8:]).upper(),
+            "key_id_64": str(packet.fingerprint[-16:]).upper(),
+            "fingerprint_v3": str(packet.fingerprint[-32:]).upper(),
+            "fingerprint_v4": str(packet.fingerprint[-40:]).upper(),
+            "fingerprint": str(packet.fingerprint).upper(),
             "pubkey_version": packet.pubkey_version,
             "raw_creation_time": packet.raw_creation_time,
             "creation_time": str(packet.creation_time),

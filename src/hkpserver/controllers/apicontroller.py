@@ -39,6 +39,7 @@ class ApiController(BaseController):
             self.renderer = self.defaultRenderer
 
         action = str("%s_%s" % (self.request.method, x[0])).lower()
+        print action
         try:
             self.gpgModel.connect(db=self.config.mongoDatabase)
             getattr(self, action)(x[1:])
@@ -52,6 +53,10 @@ class ApiController(BaseController):
 
         key = self.gpgModel.retrieveKey(keyId=data[0])
 
+        if not key:
+            self.write_error(status_code=404)
+            return
+
         if self.renderer == "json":
             self.write(self.jsonRender({"keytext": key}))
         else:
@@ -62,10 +67,21 @@ class ApiController(BaseController):
         self.write_error(status_code=405)
 
     def get_index(self, data):
-        self.write_error(status_code=405)
+        search = self._parseSearch(data[0])
+        if search["searchHex"]:
+            key = self.gpgModel.searchKeyId(keyId=search["searchString"], exact=False)
+        else:
+            key = self.gpgModel.searchKey(searchString=search["searchString"], exact=False)
+
+        if key:
+            self.write(self.jsonRender(key))
+            return
+
+        self.write_error(404)
+        return
 
     def get_vindex(self, data):
-        self.write_error(status_code=405)
+        self.get_index(data)
 
     def get_stats(self, data):
         self.write_error(status_code=405)
