@@ -74,6 +74,7 @@ class GpgModelTest(AbstractTestCase):
         allKeys = self.gpgModel.listAllKeys()
         print allKeys
 
+    @unittest.skip("limit runtime")
     def test_stats(self):
         # Create Testdata
         for i in range(40):
@@ -89,11 +90,19 @@ class GpgModelTest(AbstractTestCase):
         print json.dumps(statsDay, indent=2)
         print json.dumps(statsHour, indent=2)
 
+    @unittest.skip("limit runtime")
     def test_receiveId(self):
         key = self._readKey("demodata/key01.gpg")
         print self.gpgModel.uploadKey(key)
 
         print self.gpgModel.getKeyPrimaryUid("27C5017E0755AD31BF40832BCF96B54D3E08F9F5")
+
+    def test_picture(self):
+        key = self._readKey("demodata/key01.gpg")
+        self.gpgModel.uploadKey(key)
+
+        picture = self.gpgModel.getKeyPrimaryPicture("27C5017E0755AD31BF40832BCF96B54D3E08F9F5")
+        print picture
 
     @staticmethod
     def getSuite():

@@ -33,9 +33,13 @@ class GossipTask(object):
 
     def doWork(self):
         if self.task == self.TASK_DISTRIBUTEKEY:
-            return self._doTaskDistributeKey()
+            x = self._doTaskDistributeKey()
         elif self.task == self.TASK_SEARCHKEY:
-            return self._doTaskSearchKey()
+            x = self._doTaskSearchKey()
+
+        if x:
+            return x
+        return self._handleFail()
 
     def _doTaskSearchKey(self):
         self.logger.info("Trying to get key %s" % self.keyId)
@@ -65,10 +69,10 @@ class GossipTask(object):
         try:
             response = http_client.fetch(http_request)
             if int(response.code) != 200:
-                return self._handleFail()
+                return False
         except httpclient.HTTPError, e:
             self.logger.warning("Error: %s" % e)
-            return self._handleFail()
+            return False
         return True
 
     def _handleFail(self):

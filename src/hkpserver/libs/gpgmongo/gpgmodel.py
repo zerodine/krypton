@@ -14,6 +14,17 @@ class GpgModel(MongoBackend):
     queue = None
     gossipServers = None
 
+    def getKeyPrimaryPicture(self, keyId):
+        x = self.runQuery(
+            collection="%sDetails" % self.collection,
+            query={'fingerprint': {'$regex': keyId.upper()}},
+            fields=["UserAttributePacket.image_data", "UserAttributePacket.image_format"]
+        )
+        if x:
+            return x[0]['UserAttributePacket'][0]
+        return None
+
+
     def getKeyPrimaryUid(self, keyId):
         x = self.runQuery(collection="%sDetails" % self.collection, query={'fingerprint': {'$regex': keyId}}, fields=["primary_UserIDPacket"])
 
