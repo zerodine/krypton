@@ -110,6 +110,14 @@ class LookupController(BaseController):
         template = "gpgindex.template.html"
         if verbose:
             template = "gpgvindex.template.html"
+            # Get ID's of foreign keys
+            for dat in data:
+                if "foreignKeys" in dat:
+                    dat["foreignKeys_names"] = {}
+                    for x in dat["foreignKeys"]:
+                        dat["foreignKeys_names"][x] = self.gpgModel.getKeyPrimaryUid(x)
+                    dat["foreignKeys_names"][dat["key_id"]] = "[selfsig]"
+
         self.write(loader.load(template).generate(
             current="Lookup",
             gpgkeys=data,

@@ -89,6 +89,12 @@ class GpgModelTest(AbstractTestCase):
         print json.dumps(statsDay, indent=2)
         print json.dumps(statsHour, indent=2)
 
+    def test_receiveId(self):
+        key = self._readKey("demodata/key01.gpg")
+        print self.gpgModel.uploadKey(key)
+
+        print self.gpgModel.getKeyPrimaryUid("27C5017E0755AD31BF40832BCF96B54D3E08F9F5")
+
     @staticmethod
     def getSuite():
         test_suite = unittest.TestSuite()

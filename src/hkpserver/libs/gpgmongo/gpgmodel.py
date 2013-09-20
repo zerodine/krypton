@@ -1,8 +1,5 @@
 import hashlib
 from time import gmtime, strftime
-from tornado import httpclient
-from tornado.httputil import HTTPHeaders
-import re
 
 from src.hkpserver.libs.gpgmongo.mongobackend import MongoBackend
 from src.hkpserver.libs.gpgjsonparser import JsonParser
@@ -16,6 +13,13 @@ class GpgModel(MongoBackend):
     collection = "publicKeys"
     queue = None
     gossipServers = None
+
+    def getKeyPrimaryUid(self, keyId):
+        x = self.runQuery(collection="%sDetails" % self.collection, query={'fingerprint': {'$regex': keyId}}, fields=["primary_UserIDPacket"])
+
+        if x and "primary_UserIDPacket" in x[0]:
+            return x[0]["primary_UserIDPacket"]
+        return None
 
     def getStatistics(self, onlyDay=True):
         keys = ["date"]
@@ -107,9 +111,16 @@ class GpgModel(MongoBackend):
         jsonAsciiArmoredKey['hash_algo'] = hash_algo
 
         # getting missing keys
-        if not externalUpload:
+        if not externalUpload and self.queue:
             for fk in jsonAsciiArmoredKey["foreignKeys"]:
-                self.tryImportRemoteKey(fk)
+                self.queue.put(GossipTask(
+                    task=GossipTask.TASK_SEARCHKEY,
+                    keyId=fk,
+                    gossipServers=None,
+                    asciiArmoredKey=None,
+                    gpgModel=self
+                    )
+                )
 
         # Upload the asciiArmored Key, but first check if key has been changed
         existing = self.exists(id=keyId, collection=self.collection, fields=["hash", "hash_algo"])
@@ -131,10 +142,13 @@ class GpgModel(MongoBackend):
             self.create(data=jsonAsciiArmoredKey, collection="%sDetails" % self.collection, id=keyId)
 
         # Add Task to Queue for the Synchronisation
-        server = self.gossipServers.getRandom()
+        server = None
+        if self.queue and self.gossipServers:
+            server = self.gossipServers.getRandom()
         if server:
             self.logger.info("Created Synchronisation Task for Key %s to Server %s:%s" % (keyId, server["host"], server["port"]))
             self.queue.put(GossipTask(
+                task=GossipTask.TASK_DISTRIBUTEKEY,
                 keyId=keyId,
                 gossipServers=self.gossipServers,
                 asciiArmoredKey=asciiArmoredKey
@@ -198,24 +212,6 @@ class GpgModel(MongoBackend):
             self.tryImportRemoteKey()
             data = self.runQuery(collection="%sDetails" % self.collection, query=query)
         return data
-
-    def tryImportRemoteKey(self, keyId):
-        self.logger.info("Trying to get key %s" % keyId)
-        url = "http://pool.sks-keyservers.net:11371/pks/lookup?op=get&search=0x%s&options=mr" % keyId
-        http_client = httpclient.HTTPClient()
-        http_request = httpclient.HTTPRequest(url=url)
-        http_request.headers = (HTTPHeaders({"content-type": "application/pgp-keys"}))
-        response = None
-        try:
-            response = http_client.fetch(http_request)
-        except httpclient.HTTPError, e:
-            print e
-            return False
-
-        key = re.search("-----BEGIN PGP PUBLIC KEY BLOCK.*END PGP PUBLIC KEY BLOCK-----", response.body, re.I | re.S | re.M).group(0)
-        if key:
-            return self.uploadKey(asciiArmoredKey=key, force=True, externalUpload=True)
-        return False
 
     def searchKey(self, searchString, exact=False):
         """

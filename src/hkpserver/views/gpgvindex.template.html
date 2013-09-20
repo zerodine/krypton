@@ -47,29 +47,29 @@
                 <div class="col-md-2">{{ signature['creation_time'] }}</div>
                 <div class="col-md-1"></div>
                 <div class="col-md-1">{{ signature['expiration_time'] }}</div>
-                <div class="col-md-2"><a href="/pks/lookup?op=vindex&search=0xCF96B54D3E08F9F5">{{ signature['signer_name'] }}</a></div>
+                <div class="col-md-2"><a href="/pks/lookup?op=vindex&search=0x{{ signature['key_id'] }}">{{ gpgkey["foreignKeys_names"][signature["key_id"]] }}</a></div>
             </div>
             {% end %}
         {% end %}
-
-        {% for userattribute in gpgkey['UserAttributePacket'] %}
-            <div class="row">
-                <div class="col-md-2">uat</div>
-                <div class="col-md-4">[contents omitted]</div>
-            </div>
-            {% for signature in userid['signatures'] %}
+        {% if "UserAttributePacket" in gpgkey %}
+            {% for userattribute in gpgkey['UserAttributePacket'] %}
                 <div class="row">
-                    <div class="col-md-1">sig</div>
-                    <div class="col-md-1">{{ signature['index_sig_text'] }}</div>
-                    <div class="col-md-2"><a href="/pks/lookup?op=get&search=0x{{ signature['key_id'] }}">{{ signature['key_id_32'] }}</a></div>
-                    <div class="col-md-2">{{ signature['creation_time'] }}</div>
-                    <div class="col-md-1"></div>
-                    <div class="col-md-1">{{ signature['expiration_time'] }}</div>
-                    <div class="col-md-2"><a href="/pks/lookup?op=vindex&search=0xCF96B54D3E08F9F5">{{ signature['signer_name'] }}</a></div>
+                    <div class="col-md-2">uat</div>
+                    <div class="col-md-4">[contents omitted]</div>
                 </div>
+                {% for signature in userid['signatures'] %}
+                    <div class="row">
+                        <div class="col-md-1">sig</div>
+                        <div class="col-md-1">{{ signature['index_sig_text'] }}</div>
+                        <div class="col-md-2"><a href="/pks/lookup?op=get&search=0x{{ signature['key_id'] }}">{{ signature['key_id_32'] }}</a></div>
+                        <div class="col-md-2">{{ signature['creation_time'] }}</div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-1">{{ signature['expiration_time'] }}</div>
+                        <div class="col-md-2"><a href="/pks/lookup?op=vindex&search=0x{{ signature['key_id'] }}">{{ gpgkey["foreignKeys_names"][signature["key_id"]] }}</a></div>
+                    </div>
+                {% end %}
             {% end %}
         {% end %}
-
         {% for subkey in gpgkey['PublicSubkeyPacket'] %}
             <div class="row">
                 <div class="col-md-2">sub</div>
@@ -85,7 +85,7 @@
                     <div class="col-md-2">{{ signature['creation_time'] }}</div>
                     <div class="col-md-1"></div>
                     <div class="col-md-1">{{ signature['expiration_time'] }}</div>
-                    <div class="col-md-2"><a href="/pks/lookup?op=vindex&search=0xCF96B54D3E08F9F5">{{ signature['signer_name'] }}</a></div>
+                    <div class="col-md-2"><a href="/pks/lookup?op=vindex&search=0x{{ signature['key_id'] }}">{{ gpgkey["foreignKeys_names"][signature["key_id"]] }}</a></div>
                 </div>
             {% end %}
         {% end %}
