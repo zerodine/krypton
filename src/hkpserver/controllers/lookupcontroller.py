@@ -196,9 +196,15 @@ class LookupController(BaseController):
     def op_stats(self):
         self.gpgModel.connect(db=self.config.mongoDatabase)
 
-        if self.machineReadable:
-            pass
+        statsDaily = self.gpgModel.getStatistics(onlyDay=True)
+        statsHourly = self.gpgModel.getStatistics(onlyDay=False)
+        numKeys = self.gpgModel.numberOfKeys()
+
         loader = tornado.template.Loader("src/hkpserver/views")
         self.write(loader.load("stats.template.html").generate(
-            current="Statistics"
+            current="Statistics",
+            applicationContext=self.applicationContext,
+            statsDaily=statsDaily,
+            statsHourly=statsHourly,
+            numKeys=numKeys
         ))

@@ -2,49 +2,38 @@
 {% block title %}Krypton PGP/GPG Public Keyserver{% end %}
 
 {% block body %}
-
-<h1>SKS OpenPGP Keyserver statistics<br />Taken at 2013-09-18 21:30:02 ICT</h1><h2>Settings</h2>
+<h1>{{ applicationContext.applicationName }} statistics<br />Taken at 2013-09-18 21:30:02 ICT</h1><h2>Settings</h2>
      <table summary="Keyserver Settings">
      <tr><td>Hostname:</td><td>pgp.megagod.net</td></tr>
-     <tr><td>Nodename:</td><td>radittsu</td></tr>
-     <tr><td>Version:</td><td>1.1.4</td></tr>
-     <tr><td>Server contact:</td><td>0xA9671280428E1388F126E7261986766DC19EAE3A</td></tr>
+     <tr><td>Version:</td><td>{{ applicationContext.version }}</td></tr>
+     <tr><td>Server contact:</td><td>{{ applicationContext.serverContact }}</td></tr>
+     <tr><td>Keyserver:</td><td>{{ applicationContext.applicationName }} ({{ applicationContext.url }})</td></tr>
      <tr><td>HTTP port:</td><td>11371</td></tr>
-     <tr><td>Recon port:</td><td>11370</td></tr>
-     <tr><td>Debug level:</td><td>3</td></tr>
+     <!-- <tr><td>Recon port:</td><td>11370</td></tr> -->
 </table>
 
 <table summary="Keyserver Peers" width="100%">
 <tr valign="top"><td>
 <h2>Gossip Peers</h2>
 <table summary="Gossip Peers">
-<tr><td>keyserver.ut.mephi.ru 11370</td></tr>
-<tr><td>keyserver.secretresearchfacility.com 11370</td></tr>
-<tr><td>keys.jhcloos.com 11370</td></tr>
-<tr><td>keyserver.serviz.fr 11370</td></tr>
-<tr><td>keys.fedoraproject.org 11370</td></tr>
-<tr><td>keys.exosphere.de 11370</td></tr>
-<tr><td>openpgp1.claruscomms.net 11370</td></tr>
-<tr><td>sks.ecks.ca 11370</td></tr>
-<tr><td>keyserver.gingerbear.net 11370</td></tr>
-<tr><td>sks.keyservers.net 11370</td></tr>
-<tr><td>keyserver.witopia.net 11370</td></tr>
+<tr><td>?? 11370</td></tr>
+
 </table>
 </td><td>
-<h2>Outgoing Mailsync Peers</h2>
-<table summary="Mailsync Peers">
-</table>
 </td></tr></table>
-<h2>Statistics</h2><p>Total number of keys: 3403415</p>
+<h2>Statistics</h2><p>Total number of keys: {{ numKeys }}</p>
 <h3>Daily Histogram</h3>
 <table summary="Statistics" border="1">
 <tr><td>Time</td><td>New Keys</td><td>Updated Keys</td></tr>
-<tr><td>2013-09-18</td><td>881</td><td>351</td></tr>
+{% for record in statsDaily %}
+    <tr><td>{{ record["date"] }}</td><td>{{ record["totalNewKeys"] }}</td><td>{{ record["totalUpdatedKeys"] }}</td></tr>
+{% end %}
 </table>
 <h3>Hourly Histogram</h3>
 <table summary="Statistics" border="1">
 <tr><td>Time</td><td>New Keys</td><td>Updated Keys</td></tr>
-<tr><td>2013-09-18 21</td><td>31</td><td>6</td></tr>
-
+{% for record in statsHourly %}
+    <tr><td>{{ record["date"] }} {{ record["hour"] }}</td><td>{{ record["totalNewKeys"] }}</td><td>{{ record["totalUpdatedKeys"] }}</td></tr>
+{% end %}
 </table>
 {% end %}
