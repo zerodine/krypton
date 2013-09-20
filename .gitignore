@@ -41,3 +41,5 @@ server.test.conf
 server2.conf
 server3.conf
 atlassian-ide-plugin.xml
+doc/doctrees
+doc/html
