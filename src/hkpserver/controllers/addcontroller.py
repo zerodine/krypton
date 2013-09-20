@@ -15,7 +15,7 @@ class AddController(BaseController):
         """
 
         :param prefix:
-        :param config:
+        :param applicationContext:
         :return:
         """
         return r"%s/add(.*)" % prefix, AddController, dict(applicationContext=applicationContext)

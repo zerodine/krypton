@@ -26,7 +26,7 @@ class LookupController(BaseController):
         """
 
         :param prefix:
-        :param config:
+        :param applicationContext:
         :return:
         """
         return r"%s/lookup(.*)" % prefix, LookupController, dict(applicationContext=applicationContext)
@@ -56,6 +56,7 @@ class LookupController(BaseController):
         op = self.get_argument("op", default="index", strip=False)
         getattr(self, "op_%s" % str(op).lower())(**kwargs)
 
+    # noinspection PyShadowingBuiltins
     def _parseOtherOptions(self, fingerprint, exact, hash):
         """
 
@@ -72,7 +73,7 @@ class LookupController(BaseController):
 
     def _parseOptions(self):
         """
-
+        Parses given options in &options=x,y...
 
         """
         if "mr" in self.options:

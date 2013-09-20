@@ -217,9 +217,15 @@ class GpgModel(MongoBackend):
         query = {
             "$or": [
                 {'fingerprint': search},
+                {'fingerprint_v3': search},
+                {'key_id_64': search},
+                {'key_id_32': search},
                 {'key_id': search},
                 {'PublicSubkeyPacket.fingerprint': search},
-                {'PublicSubkeyPacket.key_id': search}
+                {'PublicSubkeyPacket.key_id': search},
+                {'PublicSubkeyPacket.fingerprint_v3': search},
+                {'PublicSubkeyPacket.key_id_64': search},
+                {'PublicSubkeyPacket.key_id_32': search},
             ]
         }
         print query

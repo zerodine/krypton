@@ -16,12 +16,10 @@ class BaseController(tornado.web.RequestHandler):
     gpgModel = None
     logger = logging.getLogger("krypton")
 
-
     def initialize(self, applicationContext=None):
         """
 
-
-        :param config:
+        :param applicationContext:
         """
         self.applicationContext = applicationContext
         self.config = self.applicationContext.config
@@ -29,7 +27,6 @@ class BaseController(tornado.web.RequestHandler):
         self.gpgModel.queue = self.applicationContext.queue
         self.gpgModel.gossipServers = self.applicationContext.gossipServers
         self.gpgModel.collection = self.config.mongoCollection
-
 
     def _parseSearch(self, searchString):
         """

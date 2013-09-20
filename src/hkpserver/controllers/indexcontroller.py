@@ -9,6 +9,7 @@ class IndexController(BaseController):
 
     """
 
+    # noinspection PyUnusedLocal
     @staticmethod
     def routes(prefix="", applicationContext=None):
         """
@@ -16,7 +17,6 @@ class IndexController(BaseController):
 
         :type prefix: Config
         :param prefix:
-        :param config:
         :return:
         """
         #return r'/(.*).html', IndexController, dict(applicationContext=applicationContext)
