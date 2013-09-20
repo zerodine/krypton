@@ -21,7 +21,7 @@ class Server(object):
 
     """
 
-    controllers = ['Lookup', 'Add', 'Index']
+    controllers = ['Api', 'Lookup', 'Add', 'Index']
     routes = []
     routePrefix = None
     applicationContext = None
