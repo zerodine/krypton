@@ -14,3 +14,14 @@ Create two configuration files based on ``server.conf.default``:
 Then start the server with the following command.
 
     python start.py --config server.conf
+
+Kryptonplus
+-----------
+
+Add the follwoing config into your ~/.ssh/config to get access to the submodule:
+
+	Host bitbucket-krypton
+		HostName bitbucket.org
+		User git
+		IdentityFile ~/git-deployment/bitbucket-krypton
+		IdentitiesOnly yes
