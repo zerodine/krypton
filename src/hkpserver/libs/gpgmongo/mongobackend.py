@@ -87,7 +87,6 @@ class MongoBackend(object):
         :param fields:
         :return:
         """
-        print {"_id": {"$regex": id}}
         self.logger.debug("Read record with id %s in collection %s" % (id, collection))
         return self._collection(collection).find_one({"_id": {"$regex": id}}, fields=fields)
 

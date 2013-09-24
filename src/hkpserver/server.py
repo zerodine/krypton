@@ -15,10 +15,9 @@ from src.hkpserver.libs.gossip import Gossiping
 from controllers import *
 
 try:
-    from src.hkpplus.controllers import *
-except ImportError, e:
+    from src.hkpplus.controllers.apicontroller import ApiController
+except ImportError:
     pass
-
 
 class Server(object):
     """
@@ -47,7 +46,7 @@ class Server(object):
             ApiController
             self.controllers.append('Api')
             logging.getLogger("krypton.bootstrap").info("Kryptonplus IS available, running enterprise version")
-        except NameError, e:
+        except NameError:
             logging.getLogger("krypton.bootstrap").info("Kryptonplus is NOT available, running community version")
 
     def _buildRoutes(self):

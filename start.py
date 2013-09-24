@@ -25,7 +25,7 @@ if __name__ == "__main__":
                         dest='port',
                         action='store',
                         type=int,
-                        default=8888, # default should be 11371
+                        default=11371,
                         help='Port to run the server')
 
     args = parser.parse_args()
