@@ -3,12 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Krypton Keyserver's documentation!
-=============================================
+.. include:: ../README.md
 
+-----------------------------
+API Documentation (generated)
+-----------------------------
 
-
-Contents:
+Packages
+========
 
 .. toctree::
    :maxdepth: 7
@@ -16,7 +18,6 @@ Contents:
 
    hkpserver/index
    hkpplus/index
-
 
 Indices and tables
 ==================

@@ -10,5 +10,5 @@ setup(
     author='tspycher',
     author_email='me@tspycher.com',
     description='GPG/PGP Keyserver with many enhancements',
-    install_requires=["PIL", "qrcode", "six", "tornado", "pymongo"]
+    install_requires=["PIL", "qrcode", "six", "tornado", "pymongo", "pgpdump"]
 )
