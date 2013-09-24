@@ -8,7 +8,9 @@ import ConfigParser
 import argparse
 import logging
 
-from src.hkpserver import Server, Config, ApplicationContext
+from src.hkpserver import Config
+from src.hkpserver import ApplicationContext
+from src.hkpserver import Server
 from src.hkpserver.libs.gossip import GossipServers
 
 if __name__ == "__main__":
@@ -43,8 +45,6 @@ if __name__ == "__main__":
     app.queue = Queue()
     app.gossipServers = GossipServers(app.config.sksServers)
 
-    server = Server(applicationContext=app)
-
     # set up logging to file - see previous section for more details
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
@@ -55,11 +55,13 @@ if __name__ == "__main__":
     console = logging.StreamHandler()
     console.setLevel(logging.INFO)
     # set a format which is simpler for console use
-    formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
+    formatter = logging.Formatter('%(name)-22s: %(levelname)-8s %(message)s')
     # tell the handler to use this format
     console.setFormatter(formatter)
     # add the handler to the root logger
     logging.getLogger('').addHandler(console)
+
+    server = Server(applicationContext=app)
 
     try:
         server.start(args.port)

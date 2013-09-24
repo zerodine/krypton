@@ -1,8 +1,7 @@
-from Queue import Queue
-
 __author__ = 'thospy'
 
-import sys, threading
+import sys
+import threading
 import logging
 
 try:
@@ -15,13 +14,18 @@ except ImportError:
 from src.hkpserver.libs.gossip import Gossiping
 from controllers import *
 
+try:
+    from src.hkpplus.controllers import *
+except ImportError, e:
+    pass
+
 
 class Server(object):
     """
 
     """
 
-    controllers = ['Api', 'Lookup', 'Add', 'Index']
+    controllers = ['Lookup', 'Add', 'Index']
     routes = []
     routePrefix = None
     applicationContext = None
@@ -37,6 +41,14 @@ class Server(object):
         self.routePrefix = routePrefix
         self.applicationContext = applicationContext
         self.gossiping = Gossiping(applicationContext=self.applicationContext)
+
+        try:
+            # noinspection PyUnresolvedReferences
+            ApiController
+            self.controllers.append('Api')
+            logging.getLogger("krypton.bootstrap").info("Kryptonplus IS available, running enterprise version")
+        except NameError, e:
+            logging.getLogger("krypton.bootstrap").info("Kryptonplus is NOT available, running community version")
 
     def _buildRoutes(self):
         """
