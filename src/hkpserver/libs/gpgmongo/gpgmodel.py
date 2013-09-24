@@ -20,10 +20,10 @@ class GpgModel(MongoBackend):
             query={'fingerprint': {'$regex': keyId.upper()}},
             fields=["UserAttributePacket.image_data", "UserAttributePacket.image_format"]
         )
-        if x:
+
+        if x and "UserAttributePacket" in x[0]:
             return x[0]['UserAttributePacket'][0]
         return None
-
 
     def getKeyPrimaryUid(self, keyId):
         x = self.runQuery(collection="%sDetails" % self.collection, query={'fingerprint': {'$regex': keyId}}, fields=["primary_UserIDPacket"])

@@ -25,11 +25,13 @@
             </div>
         {% end %}
 
+        {% if "UserAttributePacket" in gpgkey %}
         {% for userattribute in gpgkey['UserAttributePacket'] %}
             <div class="row">
                 <div class="col-md-2">&nbsp;</div>
                 <div class="col-md-4">[user attribute packet]</div>
             </div>
+        {% end %}
         {% end %}
 
         {% if showFingerprint %}

@@ -43,6 +43,11 @@ class BaseController(tornado.web.RequestHandler):
         searchString = s
         return {"searchHex": searchHex, "searchString": searchString}
 
+    def strip0x(self, x):
+        if str(x).lower().startswith("0x"):
+            return str(x[2:]).upper()
+        return x
+
     def jsonRender(self, data):
         base = {
             "count": len(data),

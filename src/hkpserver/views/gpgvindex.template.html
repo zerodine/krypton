@@ -70,6 +70,7 @@
                 {% end %}
             {% end %}
         {% end %}
+        {% if "PublicSubkeyPacket" in gpgkey %}
         {% for subkey in gpgkey['PublicSubkeyPacket'] %}
             <div class="row">
                 <div class="col-md-2">sub</div>
@@ -88,6 +89,7 @@
                     <div class="col-md-2"><a href="/pks/lookup?op=vindex&search=0x{{ signature['key_id'] }}">{{ gpgkey["foreignKeys_names"][signature["key_id"]] }}</a></div>
                 </div>
             {% end %}
+        {% end %}
         {% end %}
     </li>
     {% end %}
