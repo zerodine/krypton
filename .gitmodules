@@ -1,0 +1,3 @@
+[submodule "src/hkpserverplus"]
+	path = src/hkpserverplus
+	url = https://tspycher@bitbucket.org/zerodine/kryptonplus.git
