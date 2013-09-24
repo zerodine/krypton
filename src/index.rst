@@ -6,11 +6,16 @@
 Welcome to Krypton Keyserver's documentation!
 =============================================
 
+
+
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 7
+   :numbered:
 
+   hkpserver/index
+   hkpplus/index
 
 
 Indices and tables
