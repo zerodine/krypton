@@ -6,6 +6,7 @@ from basecontroller import BaseController
 from src.hkpserver.libs.gpgjsonparser import MrParser
 
 
+# TODO: add X-HKP-Results-Count: 8 header to requests
 class LookupController(BaseController):
     """
 

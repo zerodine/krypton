@@ -15,6 +15,11 @@ class GpgModel(MongoBackend):
     gossipServers = None
 
     def getKeyPrimaryPicture(self, keyId):
+        """
+
+        :param keyId:
+        :return:
+        """
         x = self.runQuery(
             collection="%sDetails" % self.collection,
             query={'fingerprint': {'$regex': keyId.upper()}},
@@ -26,6 +31,11 @@ class GpgModel(MongoBackend):
         return None
 
     def getKeyPrimaryUid(self, keyId):
+        """
+
+        :param keyId:
+        :return:
+        """
         x = self.runQuery(collection="%sDetails" % self.collection, query={'fingerprint': {'$regex': keyId}}, fields=["primary_UserIDPacket"])
 
         if x and "primary_UserIDPacket" in x[0]:
@@ -33,6 +43,11 @@ class GpgModel(MongoBackend):
         return None
 
     def getStatistics(self, onlyDay=True):
+        """
+
+        :param onlyDay:
+        :return:
+        """
         keys = ["date"]
         if not onlyDay:
             keys.append("hour")
@@ -201,7 +216,7 @@ class GpgModel(MongoBackend):
             return self.searchKeyId(searchString[len(hexIndicator):], exact)
         return self.searchKey(searchString, exact)
 
-    def searchKeyId(self, keyId, exact=False):
+    def searchKeyId(self, keyId, exact=False, fields=None):
         """
 
         :param keyId:
@@ -228,14 +243,13 @@ class GpgModel(MongoBackend):
                 {'PublicSubkeyPacket.key_id_32': search},
             ]
         }
-        print query
-        data = self.runQuery(collection="%sDetails" % self.collection, query=query)
+        data = self.runQuery(collection="%sDetails" % self.collection, query=query, fields=fields)
         if not data:
             self.tryImportRemoteKey()
-            data = self.runQuery(collection="%sDetails" % self.collection, query=query)
+            data = self.runQuery(collection="%sDetails" % self.collection, query=query, fields=fields)
         return data
 
-    def searchKey(self, searchString, exact=False):
+    def searchKey(self, searchString, exact=False, fields=None):
         """
 
         :param searchString:
@@ -246,12 +260,13 @@ class GpgModel(MongoBackend):
         if exact:
             pass
 
+        print fields
         query = {
             "$or": [
                 {'UserIDPacket.user': {'$regex': searchString}}
             ]
         }
-        return self.runQuery(collection="%sDetails" % self.collection, query=query)
+        return self.runQuery(collection="%sDetails" % self.collection, query=query, fields=fields)
 
     def cleanTestCollections(self):
         """

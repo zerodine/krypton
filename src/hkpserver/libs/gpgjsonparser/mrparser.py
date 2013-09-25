@@ -108,9 +108,18 @@ class MrParser(object):
         """
         data = [self._start()]
         for key in self._raw:
-            data.append(self._listKey(key))
-            data.append(self._listUid(key))
-            data.append(self._listUat(key))
+            x = self._listKey(key)
+            if x:
+                data.append(x)
+
+            x = self._listUid(key)
+            if x:
+                data.append(x)
+
+            x = self._listUat(key)
+            if x:
+                data.append(x)
+
         return "\n".join(data)
 
     def _start(self):

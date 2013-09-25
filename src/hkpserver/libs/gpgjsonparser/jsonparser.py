@@ -101,6 +101,11 @@ class JsonParser(object):
         if not sub:
             self.keyId = packet.key_id
 
+        try:
+            keyLength = int(math.log(packet.modulus, 2)) + 1
+        except TypeError:
+            keyLength = 0
+
         data = {
             "key_id": str(packet.key_id).upper(),
             "key_id_32": str(packet.fingerprint[-8:]).upper(),
@@ -122,9 +127,7 @@ class JsonParser(object):
             "group_order": packet.group_order,
             "group_gen": packet.group_gen,
             "key_value": packet.key_value,
-
-            #TODO: check for "TypeError: a float is required"
-            "key_lenght": int(math.log(packet.modulus, 2)) + 1
+            "key_lenght": keyLength
         }
 
         # adding primary references
