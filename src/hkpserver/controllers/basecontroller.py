@@ -16,8 +16,9 @@ class BaseController(tornado.web.RequestHandler):
     gpgModel = None
     logger = logging.getLogger("krypton")
 
-    def set_default_headers(self):
+    def prepare(self):
         self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Server", "%s/%s" % (self.applicationContext.applicationName, self.applicationContext.version))
 
     def initialize(self, applicationContext=None):
         """
