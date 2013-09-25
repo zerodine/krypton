@@ -1,4 +1,7 @@
+#import StringIO
 import datetime
+#from M2Crypto.BIO import BIO
+import binascii
 
 __author__ = 'thospy'
 
@@ -9,6 +12,7 @@ import base64
 import hashlib
 import math
 import logging
+import M2Crypto
 
 
 class JsonParser(object):
@@ -106,6 +110,22 @@ class JsonParser(object):
         except TypeError:
             keyLength = 0
 
+        try:
+            rsaPubKey = M2Crypto.RSA.new_pub_key(
+                (
+                    M2Crypto.m2.bn_to_mpi(M2Crypto.m2.hex_to_bn(binascii.hexlify(str(packet.exponent)))),
+                    M2Crypto.m2.bn_to_mpi(M2Crypto.m2.hex_to_bn(binascii.hexlify(str(packet.modulus)))),
+                )
+            )
+            #demodata = base64.b64encode(rsaPubKey.public_encrypt(data="This is a TEST", padding=1))
+            xx = M2Crypto.BIO.MemoryBuffer()
+            rsaPubKey.save_key_bio(xx, None)
+            rsaKey = base64.b64encode(str(xx.getvalue()))
+
+        except M2Crypto.RSA.RSAError, e:
+            self.logger.warn("Could not reproduce RSA Public key for key with ID %s (%s)", (packet.key_id, str(e)))
+            rsaKey = None
+
         data = {
             "key_id": str(packet.key_id).upper(),
             "key_id_32": str(packet.fingerprint[-8:]).upper(),
@@ -121,12 +141,12 @@ class JsonParser(object):
             "pub_algorithm": packet.pub_algorithm,
             "pub_algorithm_type": packet.pub_algorithm_type,
             "raw_pub_algorithm": packet.raw_pub_algorithm,
-            "modulus": "LONGINT:%s" % packet.modulus,
-            "exponent": packet.exponent,
-            "prime": packet.prime,
-            "group_order": packet.group_order,
-            "group_gen": packet.group_gen,
-            "key_value": packet.key_value,
+            "rsa_public_key": rsaKey,
+            #"demodata": demodata,
+            #"prime": packet.prime, # may cause OverflowError exception cause "MongoDB can only handle up to 8-byte ints"
+            #"group_order": packet.group_order, # may cause OverflowError exception cause "MongoDB can only handle up to 8-byte ints"
+            #"group_gen": packet.group_gen, # may cause OverflowError exception cause "MongoDB can only handle up to 8-byte ints"
+            #"key_value": packet.key_value, # may cause OverflowError exception cause "MongoDB can only handle up to 8-byte ints"
             "key_lenght": keyLength
         }
 

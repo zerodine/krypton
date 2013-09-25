@@ -18,20 +18,23 @@ class MassTest(AbstractTestCase):
         self.gpgModel = GpgModel(connectionUrl=self.config.mongoConnectionUrl)
         self.gpgModel.connect(db=self.config.mongoDatabase)
         self.gpgModel.collection = self.config.mongoCollection
-
         self.gpg = gnupg.GPG(gnupghome='/tmp', gpgbinary="/usr/local/bin/gpg")
 
-    @unittest.skip("Do need to import the keys again")
-    def test_loadTestdata(self):
+        #self._createbulkkeys()
+        self._loadTestdata()
+
+    def test_something(self):
+        self.assertGreaterEqual(self.gpgModel.numberOfKeys(), 1000, "less than 1000 keys imported")
+
+    def _loadTestdata(self):
         for d in os.listdir(self.basefolder):
             for f in os.listdir("%s/%s" % (self.basefolder, d)):
                 keyFile = "%s/%s/%s" % (self.basefolder, d, f)
                 key = self._readKey(keyFile)
                 self.gpgModel.uploadKey(key)
-                print "Imported key %s" % keyFile
+                #print "Imported key %s" % keyFile
 
-    @unittest.skip("Do need to create more keys")
-    def test_createbulkkeys(self):
+    def _createbulkkeys(self):
         for i in range(self.numKeys):
             input_data = self.gpg.gen_key_input(key_type="RSA", key_length=1024*4)
             keyId = self.gpg.gen_key(input_data)

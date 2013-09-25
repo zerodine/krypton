@@ -66,7 +66,11 @@ class MongoBackend(object):
 
         if id is not None:
             data["_id"] = id
-        return self._collection(collection).insert(data)
+        try:
+            return self._collection(collection).insert(data)
+        except OverflowError:
+            print data
+            raise
 
     def update(self, collection, data, id):
         """
