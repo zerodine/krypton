@@ -54,14 +54,19 @@ class Server(object):
 
 
         """
-        static = [
+        staticPre = [
+            (r'/doc/(.*)', tornado.web.StaticFileHandler, {'path': "doc/html"}),
+        ]
+        staticPost = [
             (r'/(.*)', tornado.web.StaticFileHandler, {'path': "src/hkpserver/wwwroot"})
         ]
+        for s in staticPre:
+            self.routes.append(s)
         for c in self.controllers:
             self.routes.append(eval("%sController" % c).routes(
                 prefix=self.routePrefix,
                 applicationContext=self.applicationContext))
-        for s in static:
+        for s in staticPost:
             self.routes.append(s)
 
     def start(self, port=11371, as_thread=False):
