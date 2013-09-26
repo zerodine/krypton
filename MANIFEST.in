@@ -1,3 +1,3 @@
 include *.html
-recursive-include views *.html
-recursive-include wwwroot *.html *.js *.png *.txt *.ico *.xml
+recursive-include krypton/hkpserver/views *.html
+recursive-include krypton/hkpserver/wwwroot *.html *.js *.png *.txt *.ico *.xml
