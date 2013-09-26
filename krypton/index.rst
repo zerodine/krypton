@@ -5,12 +5,9 @@
 
 .. include:: ../README.md
 
------------------------------
-API Documentation (generated)
------------------------------
+# API Documentation (generated) #
 
-Packages
-========
+## Packages
 
 .. toctree::
    :maxdepth: 7
@@ -19,8 +16,8 @@ Packages
    hkpserver/index
    hkpplus/index
 
-Indices and tables
-==================
+
+## Indices and tables
 
 * :ref:`genindex`
 * :ref:`modindex`

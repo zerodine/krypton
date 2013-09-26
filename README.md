@@ -22,7 +22,7 @@ Preparation:
     apt-get install swig python-m2crypto # to be able to build the M2Crypto Python Library
 
 Krypton Installation:
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
     sudo pip install krypton
     sudo cp /etc/krypton/server.conf.default /etc/krypton/server.conf
