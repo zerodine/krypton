@@ -2,22 +2,22 @@
 :mod:`hkpserver` Package
 ########################
 
-.. automodule:: src.hkpserver
+.. automodule:: krypton.hkpserver
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: src.hkpserver.applicationcontext
+.. automodule:: krypton.hkpserver.applicationcontext
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: src.hkpserver.config
+.. automodule:: krypton.hkpserver.config
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: src.hkpserver.server
+.. automodule:: krypton.hkpserver.server
     :members:
     :undoc-members:
     :show-inheritance:

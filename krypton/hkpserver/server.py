@@ -11,11 +11,11 @@ except ImportError:
     sys.stderr.write("Looks like you have tornado not installed. (apt-get install python-tornado)")
     sys.exit(1)
 
-from src.hkpserver.libs.gossip import Gossiping
+from krypton.hkpserver.libs.gossip import Gossiping
 from controllers import *
 
 try:
-    from src.hkpplus.controllers.apicontroller import ApiController
+    from krypton.hkpplus.controllers.apicontroller import ApiController
 except ImportError:
     pass
 
@@ -58,7 +58,7 @@ class Server(object):
             (r'/doc/(.*)', tornado.web.StaticFileHandler, {'path': "doc/html"}),
         ]
         staticPost = [
-            (r'/(.*)', tornado.web.StaticFileHandler, {'path': "src/hkpserver/wwwroot"})
+            (r'/(.*)', tornado.web.StaticFileHandler, {'path': "krypton/hkpserver/wwwroot"})
         ]
         for s in staticPre:
             self.routes.append(s)

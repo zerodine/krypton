@@ -1,6 +1,6 @@
 import gnupg
 import os
-from src.hkpserver.libs.gpgmongo import GpgModel
+from krypton.hkpserver.libs.gpgmongo import GpgModel
 from tests.abstracttestcase import AbstractTestCase
 
 __author__ = 'thospy'

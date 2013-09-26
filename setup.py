@@ -3,8 +3,8 @@ from distutils.core import setup
 setup(
     name='Krypton',
     version='0.1',
-    packages=['src', 'src.hkpserver', 'src.hkpserver.libs', 'src.hkpserver.libs.gossip', 'src.hkpserver.libs.gpgmongo',
-              'src.hkpserver.libs.gpgjsonparser', 'src.hkpserver.controllers'],
+    packages=['krypton', 'krypton.hkpserver', 'krypton.hkpserver.libs', 'krypton.hkpserver.libs.gossip', 'krypton.hkpserver.libs.gpgmongo',
+              'krypton.hkpserver.libs.gpgjsonparser', 'krypton.hkpserver.controllers'],
     url='https://github.com/zerodine/krypton',
     license='MIT',
     author='tspycher',

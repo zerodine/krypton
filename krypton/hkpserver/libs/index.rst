@@ -2,7 +2,7 @@
 :mod:`libs` Package
 ########################
 
-.. automodule:: src.hkpserver.libs
+.. automodule:: krypton.hkpserver.libs
     :members:
     :undoc-members:
     :show-inheritance:

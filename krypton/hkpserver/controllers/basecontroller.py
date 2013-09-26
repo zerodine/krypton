@@ -3,7 +3,7 @@ __author__ = 'thospy'
 import logging
 import tornado.web
 import json
-from src.hkpserver.libs.gpgmongo import GpgModel
+from krypton.hkpserver.libs.gpgmongo import GpgModel
 
 
 class BaseController(tornado.web.RequestHandler):

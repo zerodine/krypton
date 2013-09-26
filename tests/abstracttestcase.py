@@ -1,7 +1,7 @@
 __author__ = 'thospy'
 
 import unittest, ConfigParser
-from src.hkpserver import Config
+from krypton.hkpserver import Config
 
 
 class AbstractTestCase(unittest.TestCase):

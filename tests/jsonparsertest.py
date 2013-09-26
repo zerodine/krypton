@@ -4,7 +4,7 @@ import unittest
 import json
 
 from abstracttestcase import AbstractTestCase
-from src.hkpserver.libs.gpgjsonparser import JsonParser
+from krypton.hkpserver.libs.gpgjsonparser import JsonParser
 
 class JsonParserTest(AbstractTestCase):
 

@@ -1,9 +1,9 @@
 import hashlib
 from time import gmtime, strftime
 
-from src.hkpserver.libs.gpgmongo.mongobackend import MongoBackend
-from src.hkpserver.libs.gpgjsonparser import JsonParser
-from src.hkpserver.libs.gossip import GossipTask
+from krypton.hkpserver.libs.gpgmongo.mongobackend import MongoBackend
+from krypton.hkpserver.libs.gpgjsonparser import JsonParser
+from krypton.hkpserver.libs.gossip import GossipTask
 
 class GpgModel(MongoBackend):
     """
@@ -260,7 +260,6 @@ class GpgModel(MongoBackend):
         if exact:
             pass
 
-        print fields
         query = {
             "$or": [
                 {'UserIDPacket.user': {'$regex': searchString}}

@@ -8,10 +8,10 @@ import ConfigParser
 import argparse
 import logging
 
-from src.hkpserver import Config
-from src.hkpserver import ApplicationContext
-from src.hkpserver import Server
-from src.hkpserver.libs.gossip import GossipServers
+from krypton.hkpserver import Config
+from krypton.hkpserver import ApplicationContext
+from krypton.hkpserver import Server
+from krypton.hkpserver.libs.gossip import GossipServers
 
 if __name__ == "__main__":
     # parsing cli arguments

@@ -2,27 +2,27 @@
 :mod:`controllers` Package
 ##########################
 
-.. automodule:: src.hkpserver.controllers
+.. automodule:: krypton.hkpserver.controllers
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: src.hkpserver.controllers.addcontroller
+.. automodule:: krypton.hkpserver.controllers.addcontroller
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: src.hkpserver.controllers.basecontroller
+.. automodule:: krypton.hkpserver.controllers.basecontroller
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: src.hkpserver.controllers.indexcontroller
+.. automodule:: krypton.hkpserver.controllers.indexcontroller
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: src.hkpserver.controllers.lookupcontroller
+.. automodule:: krypton.hkpserver.controllers.lookupcontroller
     :members:
     :undoc-members:
     :show-inheritance:

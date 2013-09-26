@@ -4,7 +4,7 @@ import unittest
 import time
 import random
 import json
-from src.hkpserver.libs.gpgmongo import GpgModel
+from krypton.hkpserver.libs.gpgmongo import GpgModel
 from abstracttestcase import AbstractTestCase
 
 
