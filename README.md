@@ -19,6 +19,9 @@ http://stackoverflow.com/questions/10553118/problems-installing-m2crypto-on-mint
     apt-get install swig # to be able to build the M2Crypto Python Library
     sudo pip install https://github.com/zerodine/krypton/archive/master.zip#egg=krypton
 
+And to update:
+
+    sudo pip install upgrade https://github.com/zerodine/krypton/archive/master.zip#egg=krypton
 
 Mongodb
 =======
