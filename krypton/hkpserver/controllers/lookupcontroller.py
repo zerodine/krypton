@@ -95,7 +95,7 @@ class LookupController(BaseController):
             self.write(mr.parse())
             return
 
-        loader = tornado.template.Loader("krypton/hkpserver/views")
+        loader = tornado.template.Loader(self.buildPath("hkpserver/views"))
 
         template = "gpgindex.template.html"
         if verbose:
@@ -155,7 +155,7 @@ class LookupController(BaseController):
             self.set_header("Content-Type", "application/pgp-keys")
             self.write(key)
             return
-        loader = tornado.template.Loader("krypton/hkpserver/views")
+        loader = tornado.template.Loader(self.buildPath("hkpserver/views"))
         self.write(loader.load("gpgkey.template.html").generate(
             current="Get",
             fingerprint=self.searchString.upper(),
@@ -176,7 +176,7 @@ class LookupController(BaseController):
             self.set_header("Content-Type", "application/pgp-keys")
             self.write(key)
             return
-        loader = tornado.template.Loader("krypton/hkpserver/views")
+        loader = tornado.template.Loader(self.buildPath("hkpserver/views"))
         self.write(loader.load("gpgkey.template.html").generate(
             current="Get Hash",
             fingerprint=self.searchString.upper(),
@@ -190,7 +190,7 @@ class LookupController(BaseController):
         statsHourly = self.gpgModel.getStatistics(onlyDay=False)
         numKeys = self.gpgModel.numberOfKeys()
 
-        loader = tornado.template.Loader("krypton/hkpserver/views")
+        loader = tornado.template.Loader(self.buildPath("hkpserver/views"))
         self.write(loader.load("stats.template.html").generate(
             current="Statistics",
             applicationContext=self.applicationContext,

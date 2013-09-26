@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='Krypton',
-    version='0.1.1',
+    version='0.1.2',
     packages=['krypton', 'krypton.hkpserver', 'krypton.hkpserver.libs', 'krypton.hkpserver.libs.gossip', 'krypton.hkpserver.libs.gpgmongo',
               'krypton.hkpserver.libs.gpgjsonparser', 'krypton.hkpserver.controllers'],
     url='https://github.com/zerodine/krypton',

@@ -3,8 +3,8 @@ __author__ = 'thospy'
 import logging
 import tornado.web
 import json
+import os
 from krypton.hkpserver.libs.gpgmongo import GpgModel
-
 
 class BaseController(tornado.web.RequestHandler):
     """
@@ -31,6 +31,9 @@ class BaseController(tornado.web.RequestHandler):
         self.gpgModel.queue = self.applicationContext.queue
         self.gpgModel.gossipServers = self.applicationContext.gossipServers
         self.gpgModel.collection = self.config.mongoCollection
+
+    def buildPath(self, relativePath):
+        return os.path.join(self.applicationContext.basePath, relativePath)
 
     def _parseSearch(self, searchString):
         """

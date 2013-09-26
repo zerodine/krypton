@@ -11,8 +11,12 @@ Installation
 Software
 ========
 
+A note for Ubuntu Users. Please read the following article to get m2crypto installed:
+http://stackoverflow.com/questions/10553118/problems-installing-m2crypto-on-mint-follow-up
+
     apt-get install python-dev
     easy_install -U Sphinx # Only for documentation
+    apt-get install swig # to be able to build the M2Crypto Python Library
     sudo pip install https://github.com/zerodine/krypton/archive/master.zip#egg=krypton
 
 

@@ -28,7 +28,7 @@ class IndexController(BaseController):
         :param args:
         :param kwargs:
         """
-        loader = tornado.template.Loader("krypton/hkpserver/views")
+        loader = tornado.template.Loader(self.buildPath("hkpserver/views"))
         self.write(loader.load("index.template.html").generate(
             current="Home"
         ))
