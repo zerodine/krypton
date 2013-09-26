@@ -1,0 +1,3 @@
+include *.html
+recursive-include views *.html
+recursive-include wwwroot *.html *.js *.png *.txt *.ico *.xml
