@@ -14,11 +14,11 @@ setup(
     package_data={'krypton.hkpserver': [
         'views/themes/*.html',
         'views/*.html',
-        'webroot/css/*.css',
-        'webroot/fonts/*',
-        'webroot/img/*',
-        'webroot/js/vendor/*',
-        'webroot/js/*',
-        'webroot/*']}
+        'wwwroot/css/*.css',
+        'wwwroot/fonts/*',
+        'wwwroot/img/*',
+        'wwwroot/js/vendor/*',
+        'wwwroot/js/*',
+        'wwwroot/*']}
     #data_files = [('krypton.hkpserver', ['negar/data/untouchable.dat'])],
 )
