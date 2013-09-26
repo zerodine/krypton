@@ -1,9 +1,11 @@
 [mongodb]
-mongoConnectionUrl = mongodb://<USERNAME>:<PASSWORD>@<SERVER>:<PORT>/<DATABASE>
-mongoDatabase = <DATABASE>
-mongoCollection = <COLLECTION>
+#mongodb://<USERNAME>:<PASSWORD>@<SERVER>:<PORT>/<DATABASE>
+mongoConnectionUrl = mongodb://localhost:27017/gpg
+mongoDatabase = gpg
+mongoCollection = publicKeys
 
 [sks]
+#servers =
+#    server01:11371
+#    server02:11371
 servers =
-    <SERVER>:<PORT>
-    <SERVER>:<PORT>
