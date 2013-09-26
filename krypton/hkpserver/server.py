@@ -1,6 +1,6 @@
 __author__ = 'thospy'
 
-import sys
+import sys, os
 import threading
 import logging
 
@@ -54,11 +54,14 @@ class Server(object):
 
 
         """
+        print os.path.join(self.applicationContext.basePath, "../doc/html")
         staticPre = [
-            (r'/doc/(.*)', tornado.web.StaticFileHandler, {'path': "doc/html"}),
+            (r'/doc/(.*)', tornado.web.StaticFileHandler,
+             {'path': os.path.join(self.applicationContext.basePath, "doc/html")})
         ]
         staticPost = [
-            (r'/(.*)', tornado.web.StaticFileHandler, {'path': "krypton/hkpserver/wwwroot"})
+            (r'/(.*)', tornado.web.StaticFileHandler,
+             {'path':  os.path.join(self.applicationContext.basePath, "hkpserver/wwwroot")})
         ]
         for s in staticPre:
             self.routes.append(s)
