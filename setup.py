@@ -11,6 +11,6 @@ setup(
     author_email='me@tspycher.com',
     description='GPG/PGP Keyserver with many enhancements',
     install_requires=["PIL", "qrcode", "six", "tornado", "pymongo", "pgpdump", "M2Crypto"],
-    package_data={'krypton.hkpserver': ['krypton/hkpserver/views', 'krypton/hkpserver/webroot']}
+    package_data={'krypton.hkpserver': ['views/*', 'webroot/*']}
     #data_files = [('krypton.hkpserver', ['negar/data/untouchable.dat'])],
 )
