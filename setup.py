@@ -25,6 +25,10 @@ setup(
         'wwwroot/*.png',
         'wwwroot/*.ico',
         'wwwroot/*.html',
-        'wwwroot/*.txt']}
-    #data_files = [('krypton.hkpserver', ['negar/data/untouchable.dat'])],
+        'wwwroot/*.txt']},
+    data_files=[
+        ('/etc/init', ['debian/etc/init/krypton.conf']),
+        ('/usr/local/bin', ['krypton-run.py']),
+        ('/etc/krypton', ['server.conf.default'])
+    ]
 )
