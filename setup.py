@@ -21,6 +21,10 @@ setup(
         'wwwroot/img/*',
         'wwwroot/js/vendor/*.js',
         'wwwroot/js/*.js',
-        'wwwroot/*']}
+        'wwwroot/*.xml',
+        'wwwroot/*.png',
+        'wwwroot/*.ico',
+        'wwwroot/*.html',
+        'wwwroot/*.txt']}
     #data_files = [('krypton.hkpserver', ['negar/data/untouchable.dat'])],
 )
