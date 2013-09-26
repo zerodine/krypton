@@ -1,6 +1,6 @@
-===========================
-Krypton - HKP GPG Keyserver
-===========================
+===================================================
+Krypton - HKP GPG Keyserver ``pip install krypton``
+===================================================
 
 GPG Keyserver with distribution and Restful interface.
 
@@ -15,20 +15,28 @@ A note for Ubuntu Users. Please read the following article to get m2crypto insta
 http://stackoverflow.com/questions/10553118/problems-installing-m2crypto-on-mint-follow-up
 
 Preparation:
+------------
 
     apt-get install python-dev
     easy_install -U Sphinx # Only for documentation
     apt-get install swig python-m2crypto # to be able to build the M2Crypto Python Library
 
 Krypton Installation:
+---------------------
 
-    sudo pip install https://github.com/zerodine/krypton/archive/master.zip#egg=krypton
+    sudo pip install krypton
     cp /etc/krypton/server.conf.default /etc/krypton/server.conf
     service krypton start
 
 And to update:
+--------------
 
-    sudo pip install upgrade https://github.com/zerodine/krypton/archive/master.zip#egg=krypton
+    sudo pip install upgrade krypton
+
+Install directly from source:
+-----------------------------
+
+    sudo pip install https://github.com/zerodine/krypton/archive/master.zip#egg=krypton
 
 Mongodb
 =======
