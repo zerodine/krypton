@@ -18,23 +18,23 @@ import M2Crypto
 class JsonParser(object):
     """
 
-    sig_types = {
-        00: "Signature of a binary document",
-        01: "Signature of a canonical text document",
-        02: "Standalone signature",
-        16: "Generic certification of a User ID and Public Key packet",     SIG
-        17: "Persona certification of a User ID and Public Key packet",     SIG1
-        18: "Casual certification of a User ID and Public Key packet",      SIG2
-        19: "Positive certification of a User ID and Public Key packet",    SIG3
-        24: "Subkey Binding Signature",
-        25: "Primary Key Binding Signature",
-        31: "Signature directly on a key",
-        32: "Key revocation signature",
-        40: "Subkey revocation signature",
-        48: "Certification revocation signature",
-        64: "Timestamp signature",
-        80: "Third-Party Confirmation signature",
-    }
+    This are the available signature types
+
+            00: "Signature of a binary document",
+            01: "Signature of a canonical text document",
+            02: "Standalone signature",
+            16: "Generic certification of a User ID and Public Key packet",     SIG
+            17: "Persona certification of a User ID and Public Key packet",     SIG1
+            18: "Casual certification of a User ID and Public Key packet",      SIG2
+            19: "Positive certification of a User ID and Public Key packet",    SIG3
+            24: "Subkey Binding Signature",
+            25: "Primary Key Binding Signature",
+            31: "Signature directly on a key",
+            32: "Key revocation signature",
+            40: "Subkey revocation signature",
+            48: "Certification revocation signature",
+            64: "Timestamp signature",
+            80: "Third-Party Confirmation signature",
     """
 
     _raw = None
