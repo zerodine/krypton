@@ -1,3 +1,2 @@
-include *.html
-recursive-include krypton/hkpserver/views *.html
-recursive-include krypton/hkpserver/wwwroot *.html *.js *.png *.txt *.ico *.xml
+graft krypton/hkpserver/views
+graft krypton/hkpserver/wwwroot
