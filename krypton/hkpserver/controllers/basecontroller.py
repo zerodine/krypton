@@ -56,8 +56,13 @@ class BaseController(tornado.web.RequestHandler):
         return x
 
     def jsonRender(self, data):
+        if isinstance(data, dict):
+            dataLen = 1
+        else:
+            dataLen = len(data)
+
         base = {
-            "count": len(data),
+            "count": dataLen,
             "results": data
         }
         self.set_header(name="Content-Type", value="application/json")
