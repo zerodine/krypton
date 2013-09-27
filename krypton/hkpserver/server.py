@@ -18,6 +18,8 @@ try:
     from krypton.hkpplus.controllers.apicontroller import ApiController
 except ImportError:
     pass
+except Exception, e:
+    raise e
 
 class Server(object):
     """
@@ -48,6 +50,8 @@ class Server(object):
             logging.getLogger("krypton.bootstrap").info("Kryptonplus IS available, running enterprise version")
         except NameError:
             logging.getLogger("krypton.bootstrap").info("Kryptonplus is NOT available, running community version")
+        except Exception, e:
+            raise e
 
     def _buildRoutes(self):
         """
