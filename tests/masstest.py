@@ -1,4 +1,4 @@
-import gnupg
+#import gnupg
 import os
 from krypton.hkpserver.libs.gpgmongo import GpgModel
 from tests.abstracttestcase import AbstractTestCase
@@ -18,7 +18,7 @@ class MassTest(AbstractTestCase):
         self.gpgModel = GpgModel(connectionUrl=self.config.mongoConnectionUrl)
         self.gpgModel.connect(db=self.config.mongoDatabase)
         self.gpgModel.collection = self.config.mongoCollection
-        self.gpg = gnupg.GPG(gnupghome='/tmp', gpgbinary="/usr/local/bin/gpg")
+        #self.gpg = gnupg.GPG(gnupghome='/tmp', gpgbinary="/usr/local/bin/gpg")
 
         #self._createbulkkeys()
         self._loadTestdata()
@@ -36,8 +36,9 @@ class MassTest(AbstractTestCase):
 
     def _createbulkkeys(self):
         for i in range(self.numKeys):
-            input_data = self.gpg.gen_key_input(key_type="RSA", key_length=1024*4)
-            keyId = self.gpg.gen_key(input_data)
+            #input_data = self.gpg.gen_key_input(key_type="RSA", key_length=1024*4)
+            #keyId = self.gpg.gen_key(input_data)
+            keyId = "0000000000"
             print "No %s Created key with Id %s" % (i, keyId)
             folder = "%s/%s" % (self.basefolder, str(keyId)[0])
             file = "%s/%s.gpg" % (folder, keyId)
@@ -54,6 +55,12 @@ class MassTest(AbstractTestCase):
     def _mkdir(self, dir):
         if not os.path.isfile(dir) and not os.path.isdir(dir):
             os.mkdir(dir)
+
+    @staticmethod
+    def getSuite():
+        test_suite = unittest.TestSuite()
+        test_suite.addTest(unittest.makeSuite(MassTest))
+        return test_suite
 
 if __name__ == '__main__':
     unittest.main()
