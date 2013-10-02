@@ -14,12 +14,15 @@ except ImportError:
 from krypton.hkpserver.libs.gossip import Gossiping
 from controllers import *
 
+
+hkpplus = False
 try:
     from krypton.hkpplus.controllers.apicontroller import ApiController
-except ImportError:
-    pass
-except Exception, e:
-    raise e
+    hkpplus = True
+except ImportError as e:
+    if not "apicontroller" in str(e).lower():
+        raise e
+
 
 class Server(object):
     """
@@ -43,15 +46,11 @@ class Server(object):
         self.applicationContext = applicationContext
         self.gossiping = Gossiping(applicationContext=self.applicationContext)
 
-        try:
-            # noinspection PyUnresolvedReferences
-            ApiController
+        if hkpplus:
             self.controllers.append('Api')
             logging.getLogger("krypton.bootstrap").info("Kryptonplus IS available, running enterprise version")
-        except NameError:
+        else:
             logging.getLogger("krypton.bootstrap").info("Kryptonplus is NOT available, running community version")
-        except Exception, e:
-            raise e
 
     def _buildRoutes(self):
         """

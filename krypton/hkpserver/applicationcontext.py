@@ -3,6 +3,7 @@ __author__ = 'thospy'
 import os
 import krypton
 
+
 class ApplicationContext(object):
     applicationName = "Krypton Keyserver"
     version = "0.1"
