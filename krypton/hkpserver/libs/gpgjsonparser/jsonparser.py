@@ -1,10 +1,12 @@
-#import StringIO
-import datetime
-#from M2Crypto.BIO import BIO
+__author__ = "Thomas Spycher, Philipp Spinnler"
+__copyright__ = "Copyright 2013, Zerodine GmbH (zerodine.com) "
+__credits__ = ["Thomas Spycher", "Philipp Spinnler"]
+__license__ = "Apache-2.0"
+__maintainer__ = "Thomas Spycher"
+__email__ = "me@tspycher.com"
+__status__ = "Development"
+
 import binascii
-
-__author__ = 'thospy'
-
 import json
 import pgpdump
 from pgpdump.utils import (PgpdumpException, get_int2, get_int4, get_mpi, get_key_id, get_int_bytes)
