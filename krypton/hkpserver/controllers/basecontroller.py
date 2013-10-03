@@ -27,7 +27,8 @@ class BaseController(tornado.web.RequestHandler):
         """
         self.applicationContext = applicationContext
         self.config = self.applicationContext.config
-        self.gpgModel = GpgModel(connectionUrl=self.config.mongoConnectionUrl)
+        if not self.gpgModel:
+            self.gpgModel = GpgModel(connectionUrl=self.config.mongoConnectionUrl)
         self.gpgModel.queue = self.applicationContext.queue
         self.gpgModel.gossipServers = self.applicationContext.gossipServers
         self.gpgModel.collection = self.config.mongoCollection

@@ -1,11 +1,39 @@
 __author__ = 'thospy'
 
 import unittest
-from krypton.hkpplus.libs.gpg import Gpg, GpgSignatureException
+from krypton.hkpplus.libs.gpg import Gpg, GpgSignatureException, Jws
 from abstracttestcase import AbstractTestCase
 
 
 class GpgTest(AbstractTestCase):
+
+    def test_getKeyid(self):
+        keyPub = self._readKey("demodata/key02.gpg")
+        keyPriv = self._readKey("demodata/key02.priv.gpg")
+
+        data = {"plain": "This Text is signed"}
+
+        jws = Jws(publicKey=keyPub, privateKey=keyPriv)
+        signedData = jws.sign(data)
+        print signedData
+        jws2 = Jws()
+        keyId = jws2.getSignedKeyId(signedData)
+
+        self.assertEqual(keyId, "8EC0AE04CBB22E3664B2FE17B0B775686ECCF537")
+
+    def test_jws(self):
+        keyPub = self._readKey("demodata/key02.gpg")
+        keyPriv = self._readKey("demodata/key02.priv.gpg")
+
+        data = {"Username": "jbauer", "email":"jack.bauer@gmail.com"}
+
+        jws = Jws(publicKey=keyPub, privateKey=keyPriv)
+        signedData = jws.sign(data)
+        #print signedData
+        verifiedData = jws.verify(data=signedData)
+
+        self.assertDictEqual(data, verifiedData[1])
+
     def test_encryption_seperateinstances(self):
         keyPub = self._readKey("demodata/key02.gpg")
         keyPriv = self._readKey("demodata/key02.priv.gpg")
