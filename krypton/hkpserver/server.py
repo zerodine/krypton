@@ -34,7 +34,7 @@ class Server(object):
 
     """
 
-    controllers = ['Lookup', 'Add', 'Index']
+    controllers = ['Lookup', 'Add', 'Index', 'Recon']
     routes = []
     routePrefix = None
     applicationContext = None

@@ -22,6 +22,17 @@ class GpgModel(MongoBackend):
     queue = None
     gossipServers = None
 
+    def getHashes(self):
+        x = self.runQuery(
+            collection=self.collection,
+            query=None,
+            fields=["hash"]
+        )
+        hashes = []
+        for y in x:
+            hashes.append(y["hash"])
+        return hashes
+
     def getKeyPrimaryPicture(self, keyId):
         """
 
