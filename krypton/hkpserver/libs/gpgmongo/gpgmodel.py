@@ -30,7 +30,7 @@ class GpgModel(MongoBackend):
         )
         hashes = []
         for y in x:
-            hashes.append(y["hash"])
+            hashes.append("%s.%s" % (y["hash"], y["_id"]))
         return hashes
 
     def getKeyPrimaryPicture(self, keyId):
@@ -136,7 +136,10 @@ class GpgModel(MongoBackend):
     def uploadKey(self, asciiArmoredKey, force=True, externalUpload=False):
         """
 
-        :param asciiArmoredKey:
+
+        :param force: stores the key also if its unchanged
+        :param externalUpload: if set to true, foreign keys are tried to received
+        :param asciiArmoredKey: the key
         :return:
         """
         j = JsonParser(asciiData=asciiArmoredKey)
@@ -200,7 +203,7 @@ class GpgModel(MongoBackend):
                 )
             )
         else:
-            self.logger.info("I do not syncronize the key %s due to no sks servers are configured" % keyId)
+            self.logger.debug("I do not syncronize the key %s due to no sks servers are configured" % keyId)
         return True
 
     def retrieveKey(self, keyId=None, hash=None):

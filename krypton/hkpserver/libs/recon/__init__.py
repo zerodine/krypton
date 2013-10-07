@@ -7,4 +7,6 @@ __maintainer__ = "Thomas Spycher"
 __email__ = "me@tspycher.com"
 __status__ = "Development"
 
+from reconpartner import ReconPartner
 from recon import Recon
+

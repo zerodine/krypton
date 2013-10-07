@@ -10,6 +10,7 @@ __status__ = "Test"
 import os
 import random
 from krypton.hkpserver.libs.gpgmongo import GpgModel
+from krypton.hkpserver.libs.recon import Recon, ReconPartner
 from tests.abstracttestcase import AbstractTestCase
 
 import unittest
@@ -23,11 +24,11 @@ class ReconTest(AbstractTestCase):
     def setUp(self):
         self.gpgModel1 = GpgModel(connectionUrl=self.config.mongoConnectionUrl)
         self.gpgModel1.connect(db=self.config.mongoDatabase)
-        self.gpgModel1.collection = "ReconPartner1"
+        self.gpgModel1.collection = "testReconPartner1"
 
         self.gpgModel2 = GpgModel(connectionUrl=self.config.mongoConnectionUrl)
         self.gpgModel2.connect(db=self.config.mongoDatabase)
-        self.gpgModel2.collection = "ReconPartner2"
+        self.gpgModel2.collection = "testReconPartner2"
 
         self._loadTestdata()
 
@@ -38,14 +39,24 @@ class ReconTest(AbstractTestCase):
         self.gpgModel2.cleanTestCollections()
         self.gpgModel2 = None
 
-    def test_something(self):
+    def test_recon(self):
+        # Adding updated keys
+        self.gpgModel1.uploadKey(self._readKey("demodata/recon/ABDFF806_1.asc"))
+        self.gpgModel2.uploadKey(self._readKey("demodata/recon/ABDFF806_2.asc"))
+        self.gpgModel2.uploadKey(self._readKey("demodata/recon/D1FB51A3_1.asc"))
+        self.gpgModel1.uploadKey(self._readKey("demodata/recon/D1FB51A3_2.asc"))
+
         hashes1 = self.gpgModel1.getHashes()
         hashes2 = self.gpgModel2.getHashes()
 
-        print set(hashes1).symmetric_difference(set(hashes2))
+        r = Recon()
+        stats = r.syncPartners(
+            reconPartner1=ReconPartner(url=None, hashes=hashes1, model=self.gpgModel1),
+            reconPartner2=ReconPartner(url=None, hashes=hashes2, model=self.gpgModel2),
+        )
+        print stats
+        self.assertEqual(len(set(self.gpgModel1.getHashes()).symmetric_difference(set(self.gpgModel2.getHashes()))), 0)
 
-        #print self.gpgModel1.numberOfKeys()
-        #print self.gpgModel2.numberOfKeys()
 
     def _loadTestdata(self):
         partner1 = 0
@@ -55,15 +66,24 @@ class ReconTest(AbstractTestCase):
                 keyFile = "%s/%s/%s" % (self.basefolder, d, f)
                 key = self._readKey(keyFile)
                 #print "importing %s" % keyFile
-                if random.randint(100, 101) - 100:
+                randVal = random.randint(100, 102) - 100
+                if randVal == 2:
                     partner1 += 1
                     self.gpgModel1.uploadKey(key)
                     continue
-                partner2 += 1
-                self.gpgModel2.uploadKey(key)
-                continue
-        print partner1
-        print partner2
+                elif randVal == 1:
+                    partner2 += 1
+                    self.gpgModel2.uploadKey(key)
+                    continue
+                elif randVal == 0:
+                    partner1 += 1
+                    self.gpgModel1.uploadKey(key)
+                    partner2 += 1
+                    self.gpgModel2.uploadKey(key)
+                    continue
+
+        #print partner1
+        #print partner2
 
 if __name__ == '__main__':
     unittest.main()
