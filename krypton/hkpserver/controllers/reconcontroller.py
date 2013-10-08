@@ -14,7 +14,8 @@ class ReconController(BaseController):
     recon = Recon()
 
     def get(self, *args, **kwargs):
-        self.write("Blubb")
+        self.gpgModel.connect(db=self.config.mongoDatabase)
+        self.write(self.jsonRender(self.gpgModel.getHashes()))
 
     @staticmethod
     def routes(prefix="", applicationContext=None):

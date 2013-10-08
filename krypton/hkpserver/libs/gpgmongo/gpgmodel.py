@@ -149,7 +149,7 @@ class GpgModel(MongoBackend):
         hash_algo = "md5"
         h = hashlib.new(hash_algo)
         h.update(asciiArmoredKey)
-        hexValue = h.hexdigest()
+        hexValue = str(h.hexdigest()).upper()
         data = {
             "keytext": asciiArmoredKey,
             "hash": hexValue,

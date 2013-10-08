@@ -46,17 +46,19 @@ class ReconTest(AbstractTestCase):
         self.gpgModel2.uploadKey(self._readKey("demodata/recon/D1FB51A3_1.asc"))
         self.gpgModel1.uploadKey(self._readKey("demodata/recon/D1FB51A3_2.asc"))
 
-        hashes1 = self.gpgModel1.getHashes()
-        hashes2 = self.gpgModel2.getHashes()
+        #partner1 = ReconPartner(url=None, model=self.gpgModel1)
+        partner1 = ReconPartner(url="http://localhost:8888/pks", model=None)
+        partner2 = ReconPartner(url=None, model=self.gpgModel2)
 
         r = Recon()
         stats = r.syncPartners(
-            reconPartner1=ReconPartner(url=None, hashes=hashes1, model=self.gpgModel1),
-            reconPartner2=ReconPartner(url=None, hashes=hashes2, model=self.gpgModel2),
+            reconPartner1=partner1,
+            reconPartner2=partner2,
         )
-        print stats
+        #print stats
         self.assertEqual(len(set(self.gpgModel1.getHashes()).symmetric_difference(set(self.gpgModel2.getHashes()))), 0)
-
+        self.assertEqual(stats["1"]["updated"], 1)
+        self.assertEqual(stats["2"]["updated"], 1)
 
     def _loadTestdata(self):
         partner1 = 0

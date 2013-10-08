@@ -114,7 +114,7 @@ class LookupController(BaseController):
                         dat["foreignKeys_names"][x] = self.gpgModel.getKeyPrimaryUid(x)
                     dat["foreignKeys_names"][dat["key_id"]] = "[selfsig]"
 
-        self.write(loader.load(template).generate(
+        self.finish(loader.load(template).generate(
             current="Lookup",
             gpgkeys=data,
             showFingerprint=self.fingerprint,
@@ -159,10 +159,10 @@ class LookupController(BaseController):
 
         if self.machineReadable:
             self.set_header("Content-Type", "application/pgp-keys")
-            self.write(key)
+            self.finish(key)
             return
         loader = tornado.template.Loader(self.buildPath("hkpserver/views"))
-        self.write(loader.load("gpgkey.template.html").generate(
+        self.finish(loader.load("gpgkey.template.html").generate(
             current="Get",
             fingerprint=self.searchString.upper(),
             key=key
@@ -180,10 +180,10 @@ class LookupController(BaseController):
 
         if self.machineReadable:
             self.set_header("Content-Type", "application/pgp-keys")
-            self.write(key)
+            self.finish(key)
             return
         loader = tornado.template.Loader(self.buildPath("hkpserver/views"))
-        self.write(loader.load("gpgkey.template.html").generate(
+        self.finish(loader.load("gpgkey.template.html").generate(
             current="Get Hash",
             fingerprint=self.searchString.upper(),
             key=key
@@ -197,7 +197,7 @@ class LookupController(BaseController):
         numKeys = self.gpgModel.numberOfKeys()
 
         loader = tornado.template.Loader(self.buildPath("hkpserver/views"))
-        self.write(loader.load("stats.template.html").generate(
+        self.finish(loader.load("stats.template.html").generate(
             current="Statistics",
             applicationContext=self.applicationContext,
             statsDaily=statsDaily,

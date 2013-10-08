@@ -1,3 +1,5 @@
+import datetime
+
 __author__ = "Thomas Spycher, Philipp Spinnler"
 __copyright__ = "Copyright 2013, Zerodine GmbH (zerodine.com) "
 __credits__ = ["Thomas Spycher", "Philipp Spinnler"]
@@ -69,6 +71,8 @@ class MongoBackend(object):
         :return:
         """
         self.logger.debug("Create Record in collection %s" % collection)
+        data["created"] = datetime.datetime.utcnow()
+        data["updated"] = datetime.datetime.utcnow()
 
         if id is not None:
             data["_id"] = id
@@ -87,6 +91,8 @@ class MongoBackend(object):
         :return:
         """
         self.logger.debug("Updating Record with id %s in collection %s" % (id, collection))
+        data["updated"] = datetime.datetime.utcnow()
+        data = {"$set": data}
         return self._collection(collection).update({"_id": id}, data)
 
     def read(self, collection, id, fields=None):
