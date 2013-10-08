@@ -15,7 +15,7 @@ class ReconController(BaseController):
 
     def get(self, *args, **kwargs):
         self.gpgModel.connect(db=self.config.mongoDatabase)
-        self.write(self.jsonRender(self.gpgModel.getHashes()))
+        self.finish(self.jsonRender(self.gpgModel.getHashes()))
 
     @staticmethod
     def routes(prefix="", applicationContext=None):

@@ -27,6 +27,9 @@ class ReconPartner(object):
         self._hashes = hashes
         self._model = model
 
+    def url(self):
+        return self._url
+
     def getHashes(self):
         self._hashes = []
         if self._model:

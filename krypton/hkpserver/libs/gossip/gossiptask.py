@@ -1,3 +1,5 @@
+from krypton.hkpserver.libs.recon import ReconPartner, Recon
+
 __author__ = "Thomas Spycher, Philipp Spinnler"
 __copyright__ = "Copyright 2013, Zerodine GmbH (zerodine.com) "
 __credits__ = ["Thomas Spycher", "Philipp Spinnler"]
@@ -26,6 +28,7 @@ class GossipTask(object):
 
     TASK_DISTRIBUTEKEY = 1
     TASK_SEARCHKEY = 2
+    TASK_RECON = 3
 
     task = None
 
@@ -37,14 +40,30 @@ class GossipTask(object):
         self.gpgModel = gpgModel
 
     def doWork(self):
+        x = None
         if self.task == self.TASK_DISTRIBUTEKEY:
             x = self._doTaskDistributeKey()
         elif self.task == self.TASK_SEARCHKEY:
             x = self._doTaskSearchKey()
+        elif self.task == self.TASK_RECON:
+            x = self._doTaskRecon()
 
         if x:
             return x
         return self._handleFail()
+
+    def _doTaskRecon(self):
+        for g in self.gossipServers.getAll():
+            partner1 = ReconPartner(url="http://localhost:8888/pks", model=None)
+            partner2 = ReconPartner(url="http://%s:%s/pks" % (g["host"], g["port"]), model=None)
+
+            r = Recon()
+            stats = r.syncPartners(
+                reconPartner1=partner1,
+                reconPartner2=partner2,
+            )
+            self.logger.info("Done Reconciliation with remote %s -> %s" % (partner2.url(), str(stats)))
+        return True
 
     def _doTaskSearchKey(self):
         self.logger.info("Trying to get key %s" % self.keyId)
