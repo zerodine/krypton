@@ -17,8 +17,8 @@ class Recon(object):
     def syncPartners(self, reconPartner1, reconPartner2):
         stats = {"1": {"updated": 0, "missing": 0},"2": {"updated": 0, "missing": 0}, "changesTotal": 0}
         doneKeys = []
-        hashPartner1 = reconPartner1.getHashes()
-        hashPartner2 = reconPartner2.getHashes()
+        hashPartner1 = reconPartner1.hashes()
+        hashPartner2 = reconPartner2.hashes()
 
         if hashPartner1 is None or hashPartner2 is None:
             return None

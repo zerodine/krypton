@@ -30,7 +30,12 @@ class ReconPartner(object):
     def url(self):
         return self._url
 
-    def getHashes(self):
+    def hashes(self):
+        """
+
+
+        :return:
+        """
         self._hashes = None
         if self._model:
             self._hashes = self._model.getHashes()
@@ -44,6 +49,12 @@ class ReconPartner(object):
         return None
 
     def getKey(self, hash=None, keyId=None):
+        """
+
+        :param hash:
+        :param keyId:
+        :return:
+        """
         if self._model:
             if hash:
                 return self._model.retrieveKey(hash=hash)
@@ -57,13 +68,24 @@ class ReconPartner(object):
         return self._httpRequest(url=url, jsonResponse=False)
 
     def storeKey(self, asciiArmoredKey):
+        """
+
+        :param asciiArmoredKey:
+        :return:
+        """
         if self._model:
-            self._model.uploadKey(asciiArmoredKey=asciiArmoredKey, force=True, externalUpload=True)
-            return
+            return self._model.uploadKey(asciiArmoredKey=asciiArmoredKey, force=True, externalUpload=True)
 
         return self._httpRequest(url="%s/add" % self._url, data={'keytext': asciiArmoredKey})
 
     def _httpRequest(self, url, data=None, jsonResponse=True):
+        """
+
+        :param url:
+        :param data:
+        :param jsonResponse:
+        :return:
+        """
         http_client = httpclient.HTTPClient()
         http_request = httpclient.HTTPRequest(url=url)
 

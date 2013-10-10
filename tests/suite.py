@@ -1,7 +1,7 @@
 __author__ = 'thospy'
 
 import unittest
-from tests import GpgModelTest, JsonParserTest, GpgTest, MassTest, MrParserTest
+from tests import GpgModelTest, JsonParserTest, GpgTest, MassTest, MrParserTest, ReconTest
 
 
 def suite():
@@ -11,6 +11,7 @@ def suite():
     test_suite.addTest(GpgTest.getSuite())
     test_suite.addTest(MassTest.getSuite())
     test_suite.addTest(MrParserTest.getSuite())
+    test_suite.addTest(ReconTest.getSuite())
 
     return test_suite
 

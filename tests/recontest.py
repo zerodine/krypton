@@ -15,6 +15,7 @@ from tests.abstracttestcase import AbstractTestCase
 
 import unittest
 
+
 class ReconTest(AbstractTestCase):
     gpgModel1 = None
     gpgModel2 = None
@@ -46,8 +47,8 @@ class ReconTest(AbstractTestCase):
         self.gpgModel2.uploadKey(self._readKey("demodata/recon/D1FB51A3_1.asc"))
         self.gpgModel1.uploadKey(self._readKey("demodata/recon/D1FB51A3_2.asc"))
 
-        #partner1 = ReconPartner(url=None, model=self.gpgModel1)
-        partner1 = ReconPartner(url="http://localhost:8888/pks", model=None)
+        partner1 = ReconPartner(url=None, model=self.gpgModel1)
+        #partner1 = ReconPartner(url="http://localhost:8888/pks", model=None)
         partner2 = ReconPartner(url=None, model=self.gpgModel2)
 
         r = Recon()
@@ -55,7 +56,7 @@ class ReconTest(AbstractTestCase):
             reconPartner1=partner1,
             reconPartner2=partner2,
         )
-        #print stats
+        print stats
         self.assertEqual(len(set(self.gpgModel1.getHashes()).symmetric_difference(set(self.gpgModel2.getHashes()))), 0)
         self.assertEqual(stats["1"]["updated"], 1)
         self.assertEqual(stats["2"]["updated"], 1)
@@ -86,6 +87,12 @@ class ReconTest(AbstractTestCase):
 
         #print partner1
         #print partner2
+
+    @staticmethod
+    def getSuite():
+        test_suite = unittest.TestSuite()
+        test_suite.addTest(unittest.makeSuite(ReconTest))
+        return test_suite
 
 if __name__ == '__main__':
     unittest.main()

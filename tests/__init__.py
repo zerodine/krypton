@@ -5,3 +5,4 @@ from gpgmongotest import GpgModelTest
 from gpgtest import GpgTest
 from masstest import MassTest
 from mrparsertest import MrParserTest
+from recontest import ReconTest
