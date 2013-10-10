@@ -189,21 +189,23 @@ class GpgModel(MongoBackend):
         else:
             self.create(data=jsonAsciiArmoredKey, collection="%sDetails" % self.collection, id=keyId)
 
-        # Add Task to Queue for the Synchronisation
-        server = None
-        if self.queue and self.gossipServers:
-            server = self.gossipServers.getRandom()
-        if server:
-            self.logger.info("Created Synchronisation Task for Key %s to Server %s:%s" % (keyId, server["host"], server["port"]))
-            self.queue.put(GossipTask(
-                task=GossipTask.TASK_DISTRIBUTEKEY,
-                keyId=keyId,
-                gossipServers=self.gossipServers,
-                asciiArmoredKey=asciiArmoredKey
+        # Add Task to Queue for the Synchronisation if its not received by reconciliation
+        if not externalUpload:
+            server = None
+            if self.queue and self.gossipServers:
+                server = self.gossipServers.getRandom()
+            if server:
+                self.logger.info("Created Synchronisation Task for Key %s to Server %s:%s" % (keyId, server["host"], server["port"]))
+                self.queue.put(GossipTask(
+                    task=GossipTask.TASK_DISTRIBUTEKEY,
+                    keyId=keyId,
+                    gossipServers=self.gossipServers,
+                    asciiArmoredKey=asciiArmoredKey
+                    )
                 )
-            )
-        else:
-            self.logger.debug("I do not syncronize the key %s due to no sks servers are configured" % keyId)
+            else:
+                self.logger.debug("I do not syncronize the key %s due to no sks servers are configured" % keyId)
+
         return True
 
     def retrieveKey(self, keyId=None, hash=None):

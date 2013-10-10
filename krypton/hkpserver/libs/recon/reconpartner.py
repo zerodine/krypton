@@ -31,7 +31,7 @@ class ReconPartner(object):
         return self._url
 
     def getHashes(self):
-        self._hashes = []
+        self._hashes = None
         if self._model:
             self._hashes = self._model.getHashes()
         else:
@@ -39,7 +39,9 @@ class ReconPartner(object):
             if x:
                 self._hashes = x["results"]
 
-        return set(self._hashes)
+        if self._hashes is not None:
+            return set(self._hashes)
+        return None
 
     def getKey(self, hash=None, keyId=None):
         if self._model:
@@ -59,7 +61,7 @@ class ReconPartner(object):
             self._model.uploadKey(asciiArmoredKey=asciiArmoredKey, force=True, externalUpload=True)
             return
 
-        self._httpRequest(url="%s/add" % self._url, data={'keytext': asciiArmoredKey})
+        return self._httpRequest(url="%s/add" % self._url, data={'keytext': asciiArmoredKey})
 
     def _httpRequest(self, url, data=None, jsonResponse=True):
         http_client = httpclient.HTTPClient()
@@ -81,7 +83,6 @@ class ReconPartner(object):
 
         # Handling of POST responses
         if data:
-            print response.code
             if int(response.code) == 200:
                 return True
             self.logger.warning("Problem while posting data to %s" % (url))
@@ -102,3 +103,8 @@ class ReconPartner(object):
             return False
 
         return jsonData
+
+    def __repr__(self):
+        if self._url:
+            return u"%s" % self._url
+        return u"Model: %s" % self._model

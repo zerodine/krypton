@@ -62,7 +62,14 @@ class GossipTask(object):
                 reconPartner1=partner1,
                 reconPartner2=partner2,
             )
-            self.logger.info("Done Reconciliation with remote %s -> %s" % (partner2.url(), str(stats)))
+            if stats is None:
+                self.logger.info("Could not initiate Reconciliation with partners %s and %s" % (partner1, partner2))
+                return False
+
+            if stats["changesTotal"]:
+                self.logger.info("Done Reconciliation with remote %s -> %s" % (partner2, str(stats)))
+            else:
+                self.logger.info("No Data to reconcile with partner1 %s to partner2 %s" % (partner1, partner2))
         return True
 
     def _doTaskSearchKey(self):
