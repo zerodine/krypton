@@ -9,6 +9,7 @@ __status__ = "Development"
 import logging
 import tornado.web
 import json
+from bson import json_util
 import os
 from krypton.hkpserver.libs.gpgmongo import GpgModel
 
@@ -73,4 +74,5 @@ class BaseController(tornado.web.RequestHandler):
             "results": data
         }
         self.set_header(name="Content-Type", value="application/json")
-        return json.dumps(base, indent=2)
+
+        return json.dumps(base, indent=2, default=json_util.default)
