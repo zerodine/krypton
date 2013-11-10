@@ -22,7 +22,7 @@ class ReconPartner(object):
     logger = logging.getLogger("krypton.reconPartner")
 
 
-    def __init__(self, url, hashes=None, model = None):
+    def __init__(self, url, hashes=None, model=None):
         self._url = url
         self._hashes = hashes
         self._model = model

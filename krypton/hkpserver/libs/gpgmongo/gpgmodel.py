@@ -146,17 +146,19 @@ class GpgModel(MongoBackend):
         jsonAsciiArmoredKey = j.dump(raw=True)
         keyId = str(jsonAsciiArmoredKey["fingerprint"]).upper()
 
-        hash_algo = "md5"
-        h = hashlib.new(hash_algo)
-        h.update(asciiArmoredKey)
-        hexValue = str(h.hexdigest()).upper()
+        #hash_algo = "md5"
+        #h = hashlib.new(hash_algo)
+        #h.update(asciiArmoredKey)
+        #hexValue = str(h.hexdigest()).upper()
+        sksHash = j.sksHash
+        sksHashAlgo = "sks_md5"
         data = {
             "keytext": asciiArmoredKey,
-            "hash": hexValue,
-            "hash_algo": hash_algo,
+            "hash": sksHash,
+            "hash_algo": sksHashAlgo,
         }
-        jsonAsciiArmoredKey['hash'] = hexValue
-        jsonAsciiArmoredKey['hash_algo'] = hash_algo
+        jsonAsciiArmoredKey['hash'] = sksHash
+        jsonAsciiArmoredKey['hash_algo'] = sksHashAlgo
 
         # getting missing keys
         if not externalUpload and self.queue:
@@ -172,7 +174,7 @@ class GpgModel(MongoBackend):
 
         # Upload the asciiArmored Key, but first check if key has been changed
         existing = self.exists(id=keyId, collection=self.collection, fields=["hash", "hash_algo"])
-        if existing and hexValue == existing["hash"] and not force:
+        if existing and sksHash == existing["hash"] and not force:
             self.logger.info("Key %s is unchanged, no db operations are performed" % keyId)
             return True
 

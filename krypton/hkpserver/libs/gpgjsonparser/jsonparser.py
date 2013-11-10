@@ -9,7 +9,7 @@ __status__ = "Development"
 import binascii
 import json
 import pgpdump
-from pgpdump.utils import (PgpdumpException, get_int2, get_int4, get_mpi, get_key_id, get_int_bytes)
+from pgpdump.utils import (PgpdumpException, get_int2, get_int4, get_mpi, get_key_id, get_int_bytes, sksHash)
 import base64
 import hashlib
 import math
@@ -45,6 +45,7 @@ class JsonParser(object):
     logger = logging.getLogger("krypton")
     keyId = None
     otherKeys = []
+    sksHash = None
 
     def __init__(self, asciiData):
         """
@@ -53,6 +54,7 @@ class JsonParser(object):
         """
         self.reset()
         self._raw = pgpdump.AsciiData(asciiData)
+        self.sksHash = sksHash(list(self._raw.packets()))
         self._organizeData()
 
     def reset(self):

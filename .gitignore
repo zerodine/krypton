@@ -44,3 +44,8 @@ atlassian-ide-plugin.xml
 doc/doctrees
 doc/html
 doc/latex
+.mongodb-osx-x86_64-2.4.8
+include
+mongodb
+.tmp
+.Python

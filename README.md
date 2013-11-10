@@ -20,6 +20,7 @@ Preparation:
     apt-get install python-dev # To build PIL
     easy_install -U Sphinx # Only for documentation
     apt-get install swig python-m2crypto # to be able to build the M2Crypto Python Library
+    pip install git+git://github.com/tspycher/python-pgpdump.git#egg=pgpdump
 
 Krypton Installation:
 ~~~~~~~~~~~~~~~~~~~~~
